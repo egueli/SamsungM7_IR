@@ -8,7 +8,7 @@
 const uint16_t kWifiLedPin = LED_BUILTIN;
 const unsigned long kWifiConnectTimeout = 5000;
 
-long wifiConnectStart;
+unsigned long wifiConnectStart;
 
 boolean isWifiConnected() {
   return WiFi.status() == WL_CONNECTED;
