@@ -2,6 +2,7 @@
 
 #include "ir.h"
 #include "serial.h"
+#include "wifi.h"
 
 void setup() {
 
@@ -12,7 +13,7 @@ void setup() {
   USE_SERIAL.println();
   USE_SERIAL.println();
 
-//   setupWifi();
+  setupWifi();
   
   setupIR();
 //   setupSpeaker();
@@ -21,7 +22,7 @@ void setup() {
 
 void loop() {
   loopIR();
-//   loopWifi();
+  loopWifi();
 //   loopDisplay();
 }
 
