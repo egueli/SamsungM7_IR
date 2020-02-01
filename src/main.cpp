@@ -3,6 +3,7 @@
 #include "ir.h"
 #include "serial.h"
 #include "wifi.h"
+#include "speaker.h"
 
 void setup() {
 
@@ -16,7 +17,7 @@ void setup() {
   setupWifi();
   
   setupIR();
-//   setupSpeaker();
+  setupSpeaker();
 //   setupDisplay();
 }
 
@@ -28,20 +29,20 @@ void loop() {
 
 void onVolumeUp() {
 //   notifyIR();
-//   increaseVolume();
+  increaseVolume();
 }
 
 void onVolumeDown() {
 //   notifyIR();
-//   decreaseVolume();
+  decreaseVolume();
 }
 
 void onTvRad() {
 //   notifyIR();
-//   setAux();
+  setAux();
 }
 
 void onMute() {
 //   notifyIR();
-//   toggleMute();
+  toggleMute();
 }
