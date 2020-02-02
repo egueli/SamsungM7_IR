@@ -52,30 +52,28 @@ int getVolume() {
   return volume;
 }
 
-// bool checkSuccess() {
-//   int httpCode = http.GET();
-//   if (httpCode <= 0) {
-//     USE_SERIAL.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-//     return false;
-//   }
+bool checkSuccess() {
+  while (request.readyState() != 4) {
+    yield();
+    onHttpWait();
+  }
 
-//   if (httpCode != HTTP_CODE_OK) {
-//     USE_SERIAL.printf("[HTTP] GET not OK, code: %d\n", httpCode);
-//     return false;
-//   }
+  int httpCode = request.responseHTTPcode();
+  if (httpCode != 200 /* OK */) {
+    USE_SERIAL.printf("[HTTP] GET not OK, code: %d\n", httpCode);
+    return false;
+  }
 
-//   return true;
-// }
+  return true;
+}
 
-// bool setVolume(int newVolume) {
-//   String url = getSingleParamCommandUrl("SetVolume", 
-//     "dec", "volume", String(newVolume));
+bool setVolume(int newVolume) {
+  String url = getSingleParamCommandUrl("SetVolume", "dec", "volume", String(newVolume));
 
-//   http.begin(url);
-//   bool success = checkSuccess();
-//   http.end();
-//   return success;
-// }
+  request.open("GET", url.c_str());
+  request.send();
+  return checkSuccess();
+}
 
 bool setVolumeDelta(int delta) {
   int volume = getVolume();
@@ -89,20 +87,19 @@ bool setVolumeDelta(int delta) {
   USE_SERIAL.print(" => ");
   USE_SERIAL.print(newVolume);
   USE_SERIAL.print(" ");
-  return true;
-  // bool success;
-  // if (newVolume != volume) {
-  //   success = setVolume(newVolume);
-  // } else {
-  //   // skip an HTTP round-trip just to set the same volume
-  //   success = true;
-  // }
-  // if (success) {
-  //   notifyVolumeSetSuccess(newVolume);
-  // } else {
-  //   notifyVolumeSetFail();
-  // }
-  // return success;
+  bool success;
+  if (newVolume != volume) {
+    success = setVolume(newVolume);
+  } else {
+    // skip an HTTP round-trip just to set the same volume
+    success = true;
+  }
+  if (success) {
+    notifyVolumeSetSuccess(newVolume);
+  } else {
+    notifyVolumeSetFail();
+  }
+  return success;
 }
 
 void increaseVolume() {

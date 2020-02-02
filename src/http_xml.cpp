@@ -27,11 +27,6 @@ bool getValueFromHttp(asyncHTTPrequest &request, String &output, String openTag,
   
   int httpCode = request.responseHTTPcode();
 
-  if (httpCode <= 0) {
-    USE_SERIAL.printf("[HTTP] GET... failed, error: %d\n", httpCode);
-    return false;
-  }
-
   if (httpCode != 200 /* OK */) {
     USE_SERIAL.printf("[HTTP] GET not OK, code: %d\n", httpCode);
     return false;
