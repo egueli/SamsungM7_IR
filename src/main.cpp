@@ -4,6 +4,7 @@
 #include "serial.h"
 #include "wifi.h"
 #include "speaker.h"
+#include "http_xml.h"
 
 void setup() {
 
@@ -25,6 +26,10 @@ void loop() {
   loopIR();
   loopWifi();
 //   loopDisplay();
+}
+
+void onHttpWait() {
+  peekIR();
 }
 
 void onVolumeUp() {

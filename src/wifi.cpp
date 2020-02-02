@@ -24,6 +24,7 @@ void setupWifi() {
   }
 
   wifiConnectStart = millis();
+  WiFi.setAutoConnect(true);
   // WiFi credentials must not be part of git repo.
   // Git will ignore any file starting with WiFi_credentials.
   // Create a tab called "WiFiCredentials.h" with the following:

@@ -17,22 +17,41 @@ const uint64_t kIrTvRadCode = 0x20DF0FF0;
 IRrecv irrecv(kIrRecvPin, kIrCaptureBufferSize, kIrTimeout, true);
 decode_results results; // can't pass it as parameter to function?
 
-uint64_t last_decoded = UINT64_MAX;
+// Holds the last non-repeat IR code. So when IR repeat messages are received, we know
+// which code has been repeated. UINT64_MAX means no code has been received yet.
+uint64_t currentIrCode = UINT64_MAX;
 
-void onIRMessage() {
+// Holds the next IR code to call callbacks for. Set by peekIR() and consumed by consumeIR().
+// If peekIR() decodes multiple messages before consumeIR() is called, only the last
+// message should be kept. Once consumerIR() is done with this code, it sets it to UINT64_MAX.
+uint64_t irCodeToProcess = UINT64_MAX;
+
+void peekIR() {
+  bool haveNewMessage = irrecv.decode(&results);
+  if (!haveNewMessage) {
+    return;
+  }
+
   if (results.decode_type != NEC) {
     return;
   }
 
-  uint64_t decoded;
   if (results.repeat) {
-    decoded = last_decoded;
+    irCodeToProcess = currentIrCode;
   } else {
-    decoded = results.value;
-    last_decoded = decoded;
+    irCodeToProcess = results.value;
+    currentIrCode = results.value;
   }
 
-  switch (decoded) {
+  USE_SERIAL.printf("[ir:%llx]", irCodeToProcess);
+}
+
+void consumeIR() {
+  if (irCodeToProcess == UINT64_MAX) {
+    return;
+  }
+
+  switch (irCodeToProcess) {
     case kIrVolumeUpCode:
       onVolumeUp();
       break;
@@ -46,9 +65,11 @@ void onIRMessage() {
       onMute();
       break;
     default:
-      serialPrintUint64(decoded, HEX);
+      serialPrintUint64(irCodeToProcess, HEX);
       Serial.println();
   }
+
+  irCodeToProcess = UINT64_MAX;
 }
 
 void setupIR() {
@@ -56,8 +77,6 @@ void setupIR() {
 }
 
 void loopIR() {
-  if (irrecv.decode(&results)) {
-    irrecv.resume();  // get ready to receive the next value while we handle this one
-    onIRMessage();
-  }
+  peekIR();
+  consumeIR();
 }

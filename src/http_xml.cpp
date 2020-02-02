@@ -1,6 +1,7 @@
 #include <Arduino.h>
-#include <ESP8266HTTPClient.h>
+#include <asyncHTTPrequest.h>
 
+#include "http_xml.h"
 #include "serial.h"
 
 bool parseValueInXML(String document, String &output, String openTag, String closeTag) {
@@ -18,20 +19,25 @@ bool parseValueInXML(String document, String &output, String openTag, String clo
   return true;
 }
 
-bool getValueFromHttp(HTTPClient &http, String &output, String openTag, String closeTag) {
-  int httpCode = http.GET();
+bool getValueFromHttp(asyncHTTPrequest &request, String &output, String openTag, String closeTag) {
+  while (request.readyState() != 4) {
+    yield();
+    onHttpWait();
+  }
+  
+  int httpCode = request.responseHTTPcode();
 
   if (httpCode <= 0) {
-    USE_SERIAL.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    USE_SERIAL.printf("[HTTP] GET... failed, error: %d\n", httpCode);
     return false;
   }
 
-  if (httpCode != HTTP_CODE_OK) {
+  if (httpCode != 200 /* OK */) {
     USE_SERIAL.printf("[HTTP] GET not OK, code: %d\n", httpCode);
     return false;
   }
 
-  String body = http.getString();
+  String body = request.responseText();
   bool success = parseValueInXML(body, output, openTag, closeTag);
   if (!success) {
     USE_SERIAL.println("[HTTP] unable to read volume");
