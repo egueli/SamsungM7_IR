@@ -37,19 +37,28 @@ void peekIR() {
     return;
   }
 
+  if (results.overflow) {
+    USE_SERIAL.print("[ir:OVERFLOW]");
+    currentIrCode = irCodeToProcess = UINT64_MAX;
+    return;
+  }
+
   if (results.decode_type != NEC) {
     USE_SERIAL.printf("[ir:UNKNOWN(%d)]", results.rawlen);
+    // USE_SERIAL.println();
+    // USE_SERIAL.println(resultToSourceCode(&results));
+    currentIrCode = irCodeToProcess = UINT64_MAX;
     return;
   }
 
   if (results.repeat) {
     irCodeToProcess = currentIrCode;
+    USE_SERIAL.print("[ir:RPT]");
   } else {
     irCodeToProcess = results.value;
     currentIrCode = results.value;
+    USE_SERIAL.printf("[ir:%llx]", results.value);
   }
-
-  USE_SERIAL.printf("[ir:%llx]", irCodeToProcess);
 }
 
 void consumeIR() {
