@@ -8,6 +8,9 @@
 const uint16_t kIrRecvPin = 5; // D1
 const uint16_t kIrCaptureBufferSize = 1024;
 const uint8_t kIrTimeout = 15;
+const uint8_t kIrTolerance = 30;
+const uint8_t kIrMaxSkip = 5;
+const uint16_t kIrNoiseFloor = 300;
 
 const uint64_t kIrVolumeUpCode = 0x20DF40BF;
 const uint64_t kIrVolumeDownCode = 0x20DFC03F;
@@ -27,7 +30,7 @@ uint64_t currentIrCode = UINT64_MAX;
 uint64_t irCodeToProcess = UINT64_MAX;
 
 void peekIR() {
-  bool haveNewMessage = irrecv.decode(&results);
+  bool haveNewMessage = irrecv.decode(&results, NULL, kIrMaxSkip, kIrNoiseFloor);
   if (!haveNewMessage) {
     return;
   }
@@ -74,6 +77,7 @@ void consumeIR() {
 
 void setupIR() {
   irrecv.enableIRIn();  // Start the receiver
+  irrecv.setTolerance(kIrTolerance);
 }
 
 void loopIR() {
