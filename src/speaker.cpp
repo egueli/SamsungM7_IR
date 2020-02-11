@@ -164,52 +164,50 @@ bool setAux() {
   return success;
 }
 
-// bool getMute(bool &muteStatus) {
-//   String muteString;
-//   http.begin("http://192.168.0.101:55001/UIC?cmd=%3Cname%3EGetMute%3C/name%3E");
-//   bool success = getValueFromHttp(http, muteString, kMuteOpenTag, kMuteCloseTag);
-//   http.end();
-//   if (!success) {
-//     return false;
-//   }
-//   USE_SERIAL.print("[");
-//   USE_SERIAL.print(muteString);
-//   USE_SERIAL.print("]");
-//   muteStatus = muteString == kMuteOn;
-//   return true;
-// }
+bool getMute(bool &muteStatus) {
+  String muteString;
+  request.open("GET", "http://192.168.0.101:55001/UIC?cmd=%3Cname%3EGetMute%3C/name%3E");
+  request.send();
+  bool success = getValueFromHttp(request, muteString, kMuteOpenTag, kMuteCloseTag);
+  if (!success) {
+    return false;
+  }
+  USE_SERIAL.print("[");
+  USE_SERIAL.print(muteString);
+  USE_SERIAL.print("]");
+  muteStatus = muteString == kMuteOn;
+  return true;
+}
 
 
-// bool setMute(bool muteStatus) {
-//   String url = getSingleParamCommandUrl("SetMute", 
-//     "str", "mute", muteStatus ? "on" : "off");
-//   http.begin(url);
-//   bool success = checkSuccess();
-//   http.end();
-//   return success;
-// }
+bool setMute(bool muteStatus) {
+  String url = getSingleParamCommandUrl("SetMute", "str", "mute", muteStatus ? "on" : "off");
+  request.open("GET", url.c_str());
+  request.send();
+  return checkSuccess();
+}
 
 bool toggleMute() {
-//   bool isMuted;
-//   USE_SERIAL.print("Mute: ");
-//   bool getSuccess = getMute(isMuted);
-//   if (!getSuccess) {
-//     USE_SERIAL.println("unable to get mute state");
-//     notifyMuteGetFail();
-//     return false;
-//   }
-//   notifyMuteGetSuccess();
-//   USE_SERIAL.print(isMuted ? "on" : "off");
-//   USE_SERIAL.print(" => ");
+  bool isMuted;
+  USE_SERIAL.print("Mute: ");
+  bool getSuccess = getMute(isMuted);
+  if (!getSuccess) {
+    USE_SERIAL.println("unable to get mute state");
+    notifyMuteGetFail();
+    return false;
+  }
+  notifyMuteGetSuccess();
+  USE_SERIAL.print(isMuted ? "on" : "off");
+  USE_SERIAL.print(" => ");
 
-//   bool setSuccess = setMute(!isMuted);
-//   if (!setSuccess) {
-//     USE_SERIAL.println("fail :(");
-//     notifyMuteSetFail();
-//     return false;
-//   }
+  bool setSuccess = setMute(!isMuted);
+  if (!setSuccess) {
+    USE_SERIAL.println("fail :(");
+    notifyMuteSetFail();
+    return false;
+  }
 
-//   USE_SERIAL.println(!isMuted ? "on" : "off");
-//   notifyMuteSetSuccess(!isMuted);
-//   return true;
+  USE_SERIAL.println(!isMuted ? "on" : "off");
+  notifyMuteSetSuccess(!isMuted);
+  return true;
 }
