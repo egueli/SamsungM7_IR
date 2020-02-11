@@ -114,54 +114,54 @@ void decreaseVolume() {
   USE_SERIAL.println(success ? "OK" : "fail :(");
 }
 
-// // return value is success/failure; actual output is in param reference
-// bool isInputSourceAux(bool &isAux) {
-//   String inputSource;
-//   http.begin("http://192.168.0.101:55001/UIC?cmd=%3Cname%3EGetFunc%3C/name%3E");
-//   bool success = getValueFromHttp(http, inputSource, kInputSourceOpenTag, kInputSourceCloseTag);
-//   http.end();
-//   if (!success) {
-//     return false;
-//   }
-//   USE_SERIAL.print("[");
-//   USE_SERIAL.print(inputSource);
-//   USE_SERIAL.print("]");
-//   isAux = inputSource == kInputSourceAux;
-//   return true;
-// }
+// return value is success/failure; actual output is in param reference
+bool isInputSourceAux(bool &isAux) {
+  request.open("GET", "http://192.168.0.101:55001/UIC?cmd=%3Cname%3EGetFunc%3C/name%3E");
+  request.send();
+  String inputSource;
+  bool success = getValueFromHttp(request, inputSource, kInputSourceOpenTag, kInputSourceCloseTag);
+  if (!success) {
+    return false;
+  }
+  USE_SERIAL.print("[");
+  USE_SERIAL.print(inputSource);
+  USE_SERIAL.print("]");
+  isAux = inputSource == kInputSourceAux;
+  return true;
+}
 
 bool setAux() {
-//   bool isAux;
-//   {
-//     bool success = isInputSourceAux(isAux);
-//     if (!success) {
-//       USE_SERIAL.println("unable to get input source");
-//       notifyAuxGetFail();
-//       return false;
-//     }
-//   }
-//   notifyAuxGetSuccess(isAux);
+  bool isAux;
+  {
+    bool success = isInputSourceAux(isAux);
+    if (!success) {
+      USE_SERIAL.println("unable to get input source");
+      notifyAuxGetFail();
+      return false;
+    }
+  }
+  notifyAuxGetSuccess(isAux);
 
-//   if (isAux) {
-//     USE_SERIAL.println("already AUX; not setting again");
-//     notifyAuxSetSuccess(isAux);
-//     return true;
-//   }
+  if (isAux) {
+    USE_SERIAL.println("already AUX; not setting again");
+    notifyAuxSetSuccess(isAux);
+    return true;
+  }
 
-//   USE_SERIAL.print("set AUX... ");
-//   String url = getSingleParamCommandUrl("SetFunc", "str", "function", "aux");
+  USE_SERIAL.print("set AUX... ");
+  String url = getSingleParamCommandUrl("SetFunc", "str", "function", "aux");
 
-//   http.begin(url);
-//   bool success = checkSuccess();
-//   http.end();
+  request.open("GET", url.c_str());
+  request.send();
+  bool success = checkSuccess();
 
-//   USE_SERIAL.println(success ? "OK" : "fail :(");
-//   if (success) {
-//     notifyAuxSetSuccess(isAux);
-//   } else {
-//     notifyAuxSetFail();
-//   }
-//   return success;
+  USE_SERIAL.println(success ? "OK" : "fail :(");
+  if (success) {
+    notifyAuxSetSuccess(isAux);
+  } else {
+    notifyAuxSetFail();
+  }
+  return success;
 }
 
 // bool getMute(bool &muteStatus) {
