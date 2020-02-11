@@ -8,7 +8,7 @@
 
 const uint16_t kIrCaptureBufferSize = 1024;
 const uint8_t kIrTimeout = 15;
-const uint8_t kIrTolerance = 30;
+const uint8_t kIrTolerance = 45;
 const uint8_t kIrMaxSkip = 5;
 const uint16_t kIrNoiseFloor = 300;
 

@@ -2,7 +2,7 @@
 #include "LedMatrix.h"
 #include "pins.h"
 
-const unsigned long kTextDisplayDuration = 2000;
+const unsigned long kTextDisplayDuration = 1000;
 
 
 //                               dp G  F  E  D  C  B  A
