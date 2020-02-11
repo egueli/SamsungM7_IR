@@ -30,6 +30,8 @@ uint64_t currentIrCode = UINT64_MAX;
 uint64_t irCodeToProcess = UINT64_MAX;
 
 void peekIR() {
+  digitalWrite(kIrLoopPin, !digitalRead(kIrLoopPin));
+
   bool haveNewMessage = irrecv.decode(&results, NULL, kIrMaxSkip, kIrNoiseFloor);
   if (!haveNewMessage) {
     return;
@@ -81,6 +83,7 @@ void consumeIR() {
 }
 
 void setupIR() {
+  pinMode(kIrLoopPin, OUTPUT);
   irrecv.enableIRIn();  // Start the receiver
   irrecv.setTolerance(kIrTolerance);
 }
