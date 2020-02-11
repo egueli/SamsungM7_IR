@@ -4,8 +4,8 @@
 #include "wifi.h"
 #include "wifi_credentials.h"
 #include "serial.h"
+#include "pins.h"
 
-const uint16_t kWifiLedPin = LED_BUILTIN;
 const unsigned long kWifiConnectTimeout = 5000;
 
 unsigned long wifiConnectStart;

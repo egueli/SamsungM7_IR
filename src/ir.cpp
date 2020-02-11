@@ -4,8 +4,8 @@
 
 #include "ir.h"
 #include "serial.h"
+#include "pins.h"
 
-const uint16_t kIrRecvPin = 5; // D1
 const uint16_t kIrCaptureBufferSize = 1024;
 const uint8_t kIrTimeout = 15;
 const uint8_t kIrTolerance = 30;

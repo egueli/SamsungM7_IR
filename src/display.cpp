@@ -1,7 +1,7 @@
 #include <SPI.h>
 #include "LedMatrix.h"
+#include "pins.h"
 
-const byte kMax7219LoadPin = 16;
 const unsigned long kTextDisplayDuration = 2000;
 
 
