@@ -36,6 +36,7 @@ void peekIR() {
   }
 
   if (results.decode_type != NEC) {
+    USE_SERIAL.printf("[ir:UNKNOWN(%d)]", results.rawlen);
     return;
   }
 
