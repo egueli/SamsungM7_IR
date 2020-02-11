@@ -89,6 +89,10 @@ bool setVolumeDelta(int delta) {
   USE_SERIAL.print(" ");
   bool success;
   if (newVolume != volume) {
+    if (newVolume > 30 || volume < 0) {
+      // skip illegal values
+      return false;
+    }
     success = setVolume(newVolume);
   } else {
     // skip an HTTP round-trip just to set the same volume
