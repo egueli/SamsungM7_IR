@@ -1,2 +1,3 @@
 .pio
 src/wifi_credentials.h
+*.code-workspace
