@@ -5,6 +5,7 @@
 #include "wifi.h"
 #include "speaker.h"
 #include "http_xml.h"
+#include "display.h"
 
 void setup() {
 
@@ -19,13 +20,13 @@ void setup() {
   
   setupIR();
   setupSpeaker();
-//   setupDisplay();
+  setupDisplay();
 }
 
 void loop() {
   loopIR();
   loopWifi();
-//   loopDisplay();
+  loopDisplay();
 }
 
 void onHttpWait() {
@@ -33,21 +34,17 @@ void onHttpWait() {
 }
 
 void onVolumeUp() {
-//   notifyIR();
   increaseVolume();
 }
 
 void onVolumeDown() {
-//   notifyIR();
   decreaseVolume();
 }
 
 void onTvRad() {
-//   notifyIR();
   setAux();
 }
 
 void onMute() {
-//   notifyIR();
   toggleMute();
 }

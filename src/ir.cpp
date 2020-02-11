@@ -56,15 +56,19 @@ void consumeIR() {
 
   switch (irCodeToProcess) {
     case kIrVolumeUpCode:
+      notifyIR();
       onVolumeUp();
       break;
     case kIrVolumeDownCode:
+      notifyIR();
       onVolumeDown();
       break;
     case kIrTvRadCode:
+      notifyIR();
       onTvRad();
       break;
     case kIrMuteCode:
+      notifyIR();
       onMute();
       break;
     default:
