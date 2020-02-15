@@ -76,6 +76,7 @@ bool setVolume(int newVolume) {
 }
 
 bool setVolumeDelta(int delta) {
+  USE_SERIAL.print("... ");
   int volume = getVolume();
   if (volume == kGetVolumeError) {
     notifyVolumeGetFail();
@@ -83,20 +84,20 @@ bool setVolumeDelta(int delta) {
   }
   notifyVolumeGetSuccess(volume);
   int newVolume = volume + delta;
+  // prevent going out of bounds
+  newVolume = constrain(newVolume, 0, 30);
   USE_SERIAL.print(volume);
   USE_SERIAL.print(" => ");
   USE_SERIAL.print(newVolume);
   USE_SERIAL.print(" ");
   bool success;
-  if (newVolume != volume) {
-    if (newVolume > 30 || volume < 0) {
-      // skip illegal values
-      return false;
-    }
-    success = setVolume(newVolume);
-  } else {
-    // skip an HTTP round-trip just to set the same volume
+  if (newVolume == volume) {
+    // skip an HTTP request just to set the same volume
+    USE_SERIAL.print("(skip) ");
     success = true;
+  } else {
+    USE_SERIAL.print(" ... ");
+    success = setVolume(newVolume);
   }
   if (success) {
     notifyVolumeSetSuccess(newVolume);
@@ -107,13 +108,13 @@ bool setVolumeDelta(int delta) {
 }
 
 void increaseVolume() {
-  USE_SERIAL.print("VOL+... ");
+  USE_SERIAL.print("VOL+ ");
   bool success = setVolumeDelta(1);
   USE_SERIAL.println(success ? "OK" : "fail :(");
 }
 
 void decreaseVolume() {
-  USE_SERIAL.print("VOL-... ");
+  USE_SERIAL.print("VOL- ");
   bool success = setVolumeDelta(-1);
   USE_SERIAL.println(success ? "OK" : "fail :(");
 }
