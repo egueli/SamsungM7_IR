@@ -5,6 +5,8 @@
 #include "http_xml.h"
 #include "serial.h"
 
+#define IP_ADDRESS "192.168.0.102"
+
 asyncHTTPrequest request;
 
 const int kGetVolumeError = -1;
@@ -26,7 +28,7 @@ void setupSpeaker() {
 }
 
 String getSingleParamCommandUrl(String command, String paramType, String paramName, String paramValue) {
-  return String("http://192.168.0.101:55001/UIC?cmd="
+  return String("http://" IP_ADDRESS ":55001/UIC?cmd="
     "%3Cpwron%3Eon%3C/pwron%3E"
     "%3Cname%3E" + command + "%3C/name%3E"
     "%3Cp"
@@ -46,7 +48,7 @@ int getVolumeFromHttp() {
 }
 
 int getVolume() {
-  request.open("GET", "http://192.168.0.101:55001/UIC?cmd=%3Cname%3EGetVolume%3C/name%3E");
+  request.open("GET", "http://" IP_ADDRESS ":55001/UIC?cmd=%3Cname%3EGetVolume%3C/name%3E");
   request.send();
   int volume = getVolumeFromHttp();
   return volume;
@@ -121,7 +123,7 @@ void decreaseVolume() {
 
 // return value is success/failure; actual output is in param reference
 bool isInputSourceAux(bool &isAux) {
-  request.open("GET", "http://192.168.0.101:55001/UIC?cmd=%3Cname%3EGetFunc%3C/name%3E");
+  request.open("GET", "http://" IP_ADDRESS ":55001/UIC?cmd=%3Cname%3EGetFunc%3C/name%3E");
   request.send();
   String inputSource;
   bool success = getValueFromHttp(request, inputSource, kInputSourceOpenTag, kInputSourceCloseTag);
@@ -171,7 +173,7 @@ bool setAux() {
 
 bool getMute(bool &muteStatus) {
   String muteString;
-  request.open("GET", "http://192.168.0.101:55001/UIC?cmd=%3Cname%3EGetMute%3C/name%3E");
+  request.open("GET", "http://" IP_ADDRESS ":55001/UIC?cmd=%3Cname%3EGetMute%3C/name%3E");
   request.send();
   bool success = getValueFromHttp(request, muteString, kMuteOpenTag, kMuteCloseTag);
   if (!success) {
