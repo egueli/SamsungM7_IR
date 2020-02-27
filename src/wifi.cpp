@@ -6,7 +6,7 @@
 #include "serial.h"
 #include "pins.h"
 
-const unsigned long kWifiConnectTimeout = 5000;
+const unsigned long kWifiConnectTimeout = 20000;
 
 unsigned long wifiConnectStart;
 
