@@ -4,6 +4,8 @@
 #include "http_xml.h"
 #include "serial.h"
 
+const unsigned long kHttpTimeout = 5000;
+
 bool parseValueInXML(String document, String &output, String openTag, String closeTag) {
   int openIndex = document.indexOf(openTag);
   if (openIndex == -1) {
@@ -20,9 +22,16 @@ bool parseValueInXML(String document, String &output, String openTag, String clo
 }
 
 bool getValueFromHttp(asyncHTTPrequest &request, String &output, String openTag, String closeTag) {
+  unsigned long startAt = millis();
+
   while (request.readyState() != 4) {
     yield();
     onHttpWait();
+    if (millis() - startAt > kHttpTimeout) {
+      USE_SERIAL.println("[HTTP] timeout");
+      request.abort();
+      return false;
+    }
   }
   
   int httpCode = request.responseHTTPcode();
