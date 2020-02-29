@@ -27,7 +27,7 @@ void setupWifi() {
   WiFi.setAutoConnect(true);
   // WiFi credentials must not be part of git repo.
   // Git will ignore any file starting with WiFi_credentials.
-  // Create a tab called "WiFiCredentials.h" with the following:
+  // Create a file called "wifi_credentials.h" with the following:
   //const char* kWifiSsid = "your-wifi-name";
   //const char* kWifiPassword = "your-wifi-password";
   WiFi.begin(kWifiSsid, kWifiPassword);
