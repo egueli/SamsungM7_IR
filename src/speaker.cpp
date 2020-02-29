@@ -117,7 +117,7 @@ void increaseVolume() {
 
 void decreaseVolume() {
   USE_SERIAL.print("VOL- ");
-  bool success = setVolumeDelta(-1);
+  bool success = setVolumeDelta(-3);
   USE_SERIAL.println(success ? "OK" : "fail :(");
 }
 
