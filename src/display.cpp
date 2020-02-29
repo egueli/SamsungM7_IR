@@ -6,10 +6,10 @@ const unsigned long kTextDisplayDuration = 1500;
 
 
 //                               dp G  F  E  D  C  B  A
-const byte kSegmentsWiring[] = { 4, 0, 1, 2, 3, 7, 5, 6 };
+const byte kSegmentsWiring[] = { 4, 6, 1, 3, 7, 2, 0, 5 };
 
-//                             left     right
-const byte kDigitsWiring[] = { 1, 0, 2, 3 };
+//                          10^3  2  1  0
+const byte kDigitsWiring[] = { 2, 4, 1, 0 };
 
 const byte kNumChars = 20;
 const byte kDisplayFont[kNumChars][2] = {
