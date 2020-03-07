@@ -19,13 +19,13 @@ String hosts[MAX_HOSTS][4]; // Array containing information about hosts received
 // See mdns.h for definition of mdns::Query.
 void answerCallback(const mdns::Answer *answer)
 {
-    Serial.printf("Got MDNS answer 0x%02d\n", answer->rrtype);
     // A typical PTR record matches service to a human readable name.
     // eg:
     //  service: _mqtt._tcp.local
     //  name:    Mosquitto MQTT server on twinkle.local
     if (answer->rrtype == MDNS_TYPE_PTR and strstr(answer->name_buffer, QUESTION_SERVICE) != 0)
     {
+        Serial.printf("got PTR response\n");
         unsigned int i = 0;
         for (; i < MAX_HOSTS; ++i)
         {
@@ -60,6 +60,7 @@ void answerCallback(const mdns::Answer *answer)
     //  data:    p=0;w=0;port=1883;host=twinkle.local
     if (answer->rrtype == MDNS_TYPE_SRV)
     {
+        Serial.printf("got SRV response\n");
         unsigned int i = 0;
         for (; i < MAX_HOSTS; ++i)
         {
@@ -106,6 +107,7 @@ void answerCallback(const mdns::Answer *answer)
     //   address: 192.168.192.9
     if (answer->rrtype == MDNS_TYPE_A)
     {
+        Serial.printf("got A response\n");
         int i = 0;
         for (; i < MAX_HOSTS; ++i)
         {
@@ -165,7 +167,10 @@ void sendQuery() {
 
 void loopDiscovery()
 {
-    if (!querySent && isWifiConnected()) {
+    if (!isWifiConnected()) {
+        return;
+    }
+    if (!querySent) {
         Serial.println("sending MDNS query");
         sendQuery();
         querySent = true;
