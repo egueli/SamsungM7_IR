@@ -31,6 +31,10 @@ void loop() {
   loopDiscovery();
 }
 
+void onDiscoveryFinished(String address) {
+  setSpeakerAddress(address);
+}
+
 void onHttpWait() {
   peekIR();
 }

@@ -1,5 +1,6 @@
 #include "mdns.h"
 #include "wifi.h"
+#include "discovery.h"
 
 #include <Arduino.h>
 #include <mdns.h>
@@ -152,6 +153,7 @@ void loopDiscovery()
             {
                 ipAddress = addrIt->second;
                 Serial.printf("FOUND service '%s' at host '%s' with address '%s'\n", service.c_str(), host.c_str(), ipAddress.c_str());
+                onDiscoveryFinished(ipAddress);
             }
         }
     }

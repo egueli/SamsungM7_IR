@@ -1,6 +1,9 @@
 #pragma once
 
+#include <Arduino.h>
+
 void setupSpeaker();
+void setSpeakerAddress(String address);
 
 void increaseVolume();
 void decreaseVolume(); 

@@ -5,7 +5,7 @@
 #include "http_xml.h"
 #include "serial.h"
 
-#define IP_ADDRESS "192.168.0.102"
+String speakerIpAddress;
 
 asyncHTTPrequest request;
 
@@ -27,15 +27,35 @@ const String kMuteOn = "on";
 void setupSpeaker() {
 }
 
-String getSingleParamCommandUrl(String command, String paramType, String paramName, String paramValue) {
-  return String("http://" IP_ADDRESS ":55001/UIC?cmd="
+void setSpeakerAddress(String address) {
+  speakerIpAddress = address;
+}
+
+bool getQueryUrl(String &output, String command) {
+  if (speakerIpAddress.isEmpty()) {
+    return false;
+  }
+
+  output = "http://" + speakerIpAddress + ":55001/UIC?cmd="
+      "%3Cname%3E" + command + "%3C/name%3E";
+  
+  return true;
+}
+
+bool getSingleParamCommandUrl(String &output, String command, String paramType, String paramName, String paramValue) {
+  if (speakerIpAddress.isEmpty()) {
+    return false;
+  }
+
+  output = "http://" + speakerIpAddress + ":55001/UIC?cmd="
     "%3Cpwron%3Eon%3C/pwron%3E"
     "%3Cname%3E" + command + "%3C/name%3E"
     "%3Cp"
     "%20type%3D%22" + paramType + "%22"
     "%20name%3D%22" + paramName + "%22"
     "%20val%3D%22" + paramValue + "%22"
-    "/%3E");
+    "/%3E";
+  return true;
 }
 
 int getVolumeFromHttp() {
@@ -48,7 +68,12 @@ int getVolumeFromHttp() {
 }
 
 int getVolume() {
-  request.open("GET", "http://" IP_ADDRESS ":55001/UIC?cmd=%3Cname%3EGetVolume%3C/name%3E");
+  String url;
+  if (!getQueryUrl(url, "GetVolume")) {
+    return false;
+  }
+
+  request.open("GET", url.c_str());
   request.send();
   int volume = getVolumeFromHttp();
   return volume;
@@ -70,7 +95,10 @@ bool checkSuccess() {
 }
 
 bool setVolume(int newVolume) {
-  String url = getSingleParamCommandUrl("SetVolume", "dec", "volume", String(newVolume));
+  String url;
+  if (!getSingleParamCommandUrl(url, "SetVolume", "dec", "volume", String(newVolume))) {
+    return false;
+  }
 
   request.open("GET", url.c_str());
   request.send();
@@ -123,7 +151,11 @@ void decreaseVolume() {
 
 // return value is success/failure; actual output is in param reference
 bool isInputSourceAux(bool &isAux) {
-  request.open("GET", "http://" IP_ADDRESS ":55001/UIC?cmd=%3Cname%3EGetFunc%3C/name%3E");
+  String url;
+  if (!getQueryUrl(url, "GetFunc")) {
+    return false;
+  }
+  request.open("GET", url.c_str());
   request.send();
   String inputSource;
   bool success = getValueFromHttp(request, inputSource, kInputSourceOpenTag, kInputSourceCloseTag);
@@ -156,7 +188,10 @@ bool setAux() {
   }
 
   USE_SERIAL.print("set AUX... ");
-  String url = getSingleParamCommandUrl("SetFunc", "str", "function", "aux");
+  String url;
+  if (!getSingleParamCommandUrl(url, "SetFunc", "str", "function", "aux")) {
+    return false;
+  }
 
   request.open("GET", url.c_str());
   request.send();
@@ -172,9 +207,13 @@ bool setAux() {
 }
 
 bool getMute(bool &muteStatus) {
-  String muteString;
-  request.open("GET", "http://" IP_ADDRESS ":55001/UIC?cmd=%3Cname%3EGetMute%3C/name%3E");
+  String url;
+  if (!getQueryUrl(url, "GetMute")) {
+    return false;
+  }
+  request.open("GET", url.c_str());
   request.send();
+  String muteString;
   bool success = getValueFromHttp(request, muteString, kMuteOpenTag, kMuteCloseTag);
   if (!success) {
     return false;
@@ -188,7 +227,10 @@ bool getMute(bool &muteStatus) {
 
 
 bool setMute(bool muteStatus) {
-  String url = getSingleParamCommandUrl("SetMute", "str", "mute", muteStatus ? "on" : "off");
+  String url;
+  if (!getSingleParamCommandUrl(url, "SetMute", "str", "mute", muteStatus ? "on" : "off")) {
+    return false;
+  }
   request.open("GET", url.c_str());
   request.send();
   return checkSuccess();
