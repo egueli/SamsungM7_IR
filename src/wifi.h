@@ -2,3 +2,4 @@
 
 void setupWifi();
 void loopWifi();
+bool isWifiConnected();

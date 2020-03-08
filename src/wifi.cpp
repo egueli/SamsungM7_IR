@@ -10,7 +10,7 @@ const unsigned long kWifiConnectTimeout = 20000;
 
 unsigned long wifiConnectStart;
 
-boolean isWifiConnected() {
+bool isWifiConnected() {
   return WiFi.status() == WL_CONNECTED;
 }
 

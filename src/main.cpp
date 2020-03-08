@@ -3,6 +3,7 @@
 #include "ir.h"
 #include "serial.h"
 #include "wifi.h"
+#include "discovery.h"
 #include "speaker.h"
 #include "http_xml.h"
 #include "display.h"
@@ -17,7 +18,7 @@ void setup() {
   USE_SERIAL.println();
 
   setupWifi();
-  
+  setupDiscovery();
   setupIR();
   setupSpeaker();
   setupDisplay();
@@ -27,6 +28,11 @@ void loop() {
   loopIR();
   loopWifi();
   loopDisplay();
+  loopDiscovery();
+}
+
+void onDiscoveryFinished(String address) {
+  setSpeakerAddress(address);
 }
 
 void onHttpWait() {
