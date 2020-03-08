@@ -7,16 +7,9 @@
 #include <map>
 #include <set>
 
-// TODO convert to constants
-#define QUESTION_SERVICE "_spotify-connect._tcp.local"
-#define MAX_MDNS_PACKET_SIZE 512
-
-#define MAX_HOSTS 4
-#define HOSTS_SERVICE_NAME 0
-#define HOSTS_PORT 1
-#define HOSTS_HOST_NAME 2
-#define HOSTS_ADDRESS 3
-String hosts[MAX_HOSTS][4]; // Array containing information about hosts received over mDNS.
+const char * kServiceQuestion = "_spotify-connect._tcp.local";
+const unsigned int kMaxMDNSPacketSize = 512;
+byte buffer[kMaxMDNSPacketSize];
 
 bool querySent;
 
@@ -35,7 +28,7 @@ void answerCallback(const mdns::Answer *answer)
     // eg:
     //  service: _mqtt._tcp.local
     //  name:    Mosquitto MQTT server on twinkle.local
-    if (answer->rrtype == MDNS_TYPE_PTR and strstr(answer->name_buffer, QUESTION_SERVICE) != 0)
+    if (answer->rrtype == MDNS_TYPE_PTR and strstr(answer->name_buffer, kServiceQuestion) != 0)
     {
         if (services.size() >= kMaxEntries)
         {
@@ -103,8 +96,7 @@ void answerCallback(const mdns::Answer *answer)
     }
 }
 
-byte buffer[MAX_MDNS_PACKET_SIZE];
-mdns::MDns my_mdns(NULL, NULL, answerCallback, buffer, MAX_MDNS_PACKET_SIZE);
+mdns::MDns my_mdns(NULL, NULL, answerCallback, buffer, kMaxMDNSPacketSize);
 
 void setupDiscovery()
 {
@@ -136,8 +128,7 @@ void loopDiscovery()
     }
     if (!querySent)
     {
-        Serial.println("sending MDNS PTR query");
-        sendQuery(MDNS_TYPE_PTR, QUESTION_SERVICE);
+        sendQuery(MDNS_TYPE_PTR, kServiceQuestion);
         querySent = true;
     }
     my_mdns.loop();
