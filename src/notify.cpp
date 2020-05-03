@@ -6,6 +6,32 @@ const char kDisplayErrorCodeVolume = 'v';
 const char kDisplayErrorCodeAux = 't';
 const char kDisplayErrorCodeMute = 'n';
 
+void animate(char ch) {
+  String text = "    ";
+  int dashPos = (millis() / 600) % 4;
+  text[dashPos] = ch;
+  displayText(text);
+}
+
+void notifyNoWifi() {
+  animate('-');
+}
+
+void notifyNoSpeaker() {
+  animate('o');
+}
+
+void notifySpeakerAddress(String address) {
+  int lastDotPosition = address.lastIndexOf(".");
+  if (lastDotPosition == -1) {
+    displayText("S....");
+    return;
+  }
+
+  String lastOctet = address.substring(lastDotPosition + 1);
+  displayText("S." + lastOctet);
+}
+
 void notifyIR() {
   displayText(" .");
 }

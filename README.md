@@ -39,8 +39,9 @@ Also check out the `schematic` folder for the EAGLE schematic. I'm not providing
 ### Firmware
 
 The firmware mainly takes care of decoding IR signals and translating them to REST requests. Other features:
-* Managing the WiFi connection, and will reset if connection is lost;
-* Finding out the speaker on the network, and finding its IP address, using MDNS;
+* WiFi watchdog: resets itself if connection is lost;
+* MDNS/Bonjour: auto-discovery of the speaker IP address on the network (assumes only one speaker is in the network, otherwise results are unpredictable);
+* Speaker watchdog: check periodically that the speaker is still available at that address, and reset itself otherwise;
 * Controlling a display for user feedback.
 
 The firmware needs PlatformIO to be built.

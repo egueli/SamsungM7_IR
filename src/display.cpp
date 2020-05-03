@@ -11,10 +11,11 @@ const byte kSegmentsWiring[] = { 4, 6, 1, 3, 7, 2, 0, 5 };
 //                          10^3  2  1  0
 const byte kDigitsWiring[] = { 2, 4, 1, 0 };
 
-const byte kNumChars = 20;
+const byte kNumChars = 24;
 const byte kDisplayFont[kNumChars][2] = {
   // ch    ABCDEFGd
   { ' ', 0b00000000 },
+  { '-', 0b00000010 },
   { '0', 0b11111100 },
   { '1', 0b01100000 },
   { '2', 0b11011010 },
@@ -26,7 +27,10 @@ const byte kDisplayFont[kNumChars][2] = {
   { '8', 0b11111110 },
   { '9', 0b11110110 },
   { 'E', 0b10011110 },
+  { 'H', 0b01101110 },
+  { 'S', 0b10110110 },
   { 'e', 0b10011110 },
+  { 'i', 0b00001000 },
   { 'm', 0b00101010 },
   { 'n', 0b00101010 },
   { 'o', 0b00111010 },
@@ -39,15 +43,6 @@ const byte kDisplayFont[kNumChars][2] = {
 LedMatrix ledMatrix = LedMatrix(1, kMax7219LoadPin);
 
 unsigned long lastTextAt;
-
-void setupDisplay() {
-  ledMatrix.init();
-  ledMatrix.sendByte(MAX7219_REG_SCANLIMIT, 4);   // show only 4 digits
-
-  ledMatrix.clear();
-  ledMatrix.commit();
-  ledMatrix.setIntensity(15);
-}
 
 void loopDisplay() {
   if (lastTextAt != 0 && millis() > lastTextAt + kTextDisplayDuration) {
@@ -93,3 +88,13 @@ void displayText(String text) {
   lastTextAt = millis();
 }
 
+void setupDisplay() {
+  ledMatrix.init();
+  ledMatrix.sendByte(MAX7219_REG_SCANLIMIT, 4);   // show only 4 digits
+
+  ledMatrix.clear();
+  ledMatrix.commit();
+  ledMatrix.setIntensity(15);
+
+  displayText(" Hi");
+} 
