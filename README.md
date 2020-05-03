@@ -28,8 +28,8 @@ The Samsung Multiroom speaker can accept multiple inputs: Bluetooth, various str
 You'll need the following:
 * Wemos D1 Mini or an equivalent ESP8266-based board;
 * A TSOP1738 IR receiver
-* A level shifter (because the TSOP works at 5V but the ESP) like [Adafruit](https://www.adafruit.com/product/757)'s
-* A 4-digit seven-segment display
+* A level shifter like [Adafruit](https://www.adafruit.com/product/757)'s (because the TSOP works at 5V but the ESP officially doesn't)
+* (optional) A MAX7219 and 4-digit seven-segment display
 * A few passive components, see schematic:
 
 ![Schematic](hardware/board.png)
@@ -38,16 +38,18 @@ Also check out the `schematic` folder for the EAGLE schematic. I'm not providing
 
 ### Firmware
 
+The firmware mainly takes care of decoding IR signals and translating them to REST requests. Other features:
+* Managing the WiFi connection, and will reset if connection is lost;
+* Finding out the speaker on the network, and finding its IP address, using MDNS;
+* Controlling a display for user feedback.
+
 The firmware needs PlatformIO to be built.
 
-* In `src/speaker.cpp` change `IP_ADDRESS` to the IP address of the speaker. You can find it from your router's DHCP page.
-* Create a file `src/wifi_credentials.h` to enter your Wi-Fi crendentials. See details in `src/wifi.cpp`.
+#### Firmware configuration
 
-### Display
+Create a file `src/wifi_credentials.h` to enter your Wi-Fi crendentials. See details in `src/wifi.cpp`.
 
-This firmware can also provide user feedback via four 7-segment displays, controlled by a MAX7219, if provided (i.e. the firwmare should just work even if there is no display).
-
-### IR codes
+#### IR codes
 
 The firmware is compatible with my LG smart TV remote control. It uses the NEC protocol. The following buttons are recognized:
 
@@ -56,3 +58,9 @@ The firmware is compatible with my LG smart TV remote control. It uses the NEC p
 * Mute
 * TV/RAD
 
+
+### Display
+
+This firmware can also provide user feedback via four 7-segment displays, controlled by a MAX7219, if provided (i.e. the firmware should just work even if there is no display).
+
+The displays have common cathode; the anodes should be connected to JP2 and the cathodes to JP1. Since I was using an old board I made for the displays, the pin mapping between the MAX7219 and the displays looks somewhat scrambled in the schematic. Feel free to edit it for your setup.
