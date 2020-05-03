@@ -36,8 +36,12 @@ void setupWifi() {
 void loopWifi() {
   digitalWrite(kWifiLedPin, isWifiConnected() ? HIGH : LOW);
 
-  if (!isWifiConnected() && millis() > wifiConnectStart + kWifiConnectTimeout) {
-    USE_SERIAL.println("wifi disconnected or connect timeout; restarting");
-    ESP.restart();
+  if (!isWifiConnected()) {
+    notifyNoWifi();
+    
+    if (millis() > wifiConnectStart + kWifiConnectTimeout) {
+      USE_SERIAL.println("wifi disconnected or connect timeout; restarting");
+      ESP.restart();
+    }
   }
 }

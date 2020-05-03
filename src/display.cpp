@@ -11,10 +11,11 @@ const byte kSegmentsWiring[] = { 4, 6, 1, 3, 7, 2, 0, 5 };
 //                          10^3  2  1  0
 const byte kDigitsWiring[] = { 2, 4, 1, 0 };
 
-const byte kNumChars = 23;
+const byte kNumChars = 24;
 const byte kDisplayFont[kNumChars][2] = {
   // ch    ABCDEFGd
   { ' ', 0b00000000 },
+  { '-', 0b00000010 },
   { '0', 0b11111100 },
   { '1', 0b01100000 },
   { '2', 0b11011010 },

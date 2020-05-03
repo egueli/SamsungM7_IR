@@ -6,6 +6,13 @@ const char kDisplayErrorCodeVolume = 'v';
 const char kDisplayErrorCodeAux = 't';
 const char kDisplayErrorCodeMute = 'n';
 
+void notifyNoWifi() {
+  String text = "    ";
+  int dashPos = (millis() / 600) % 4;
+  text[dashPos] = '-';
+  displayText(text);
+}
+
 void notifySpeakerAddress(String address) {
   int lastDotPosition = address.lastIndexOf(".");
   if (lastDotPosition == -1) {
