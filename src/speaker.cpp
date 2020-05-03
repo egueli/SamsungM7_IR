@@ -28,6 +28,7 @@ void setupSpeaker() {
 }
 
 void setSpeakerAddress(String address) {
+  notifySpeakerAddress(address);
   speakerIpAddress = address;
 }
 

@@ -6,6 +6,17 @@ const char kDisplayErrorCodeVolume = 'v';
 const char kDisplayErrorCodeAux = 't';
 const char kDisplayErrorCodeMute = 'n';
 
+void notifySpeakerAddress(String address) {
+  int lastDotPosition = address.lastIndexOf(".");
+  if (lastDotPosition == -1) {
+    displayText("S....");
+    return;
+  }
+
+  String lastOctet = address.substring(lastDotPosition + 1);
+  displayText("S." + lastOctet);
+}
+
 void notifyIR() {
   displayText(" .");
 }
