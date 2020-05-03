@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 void setupSpeaker();
+void loopSpeaker();
 void setSpeakerAddress(String address);
 
 void increaseVolume();
@@ -11,6 +12,7 @@ bool setAux();
 bool toggleMute();
 
 // The functions below are callbacks. Their definition must be in a file other than speaker.cpp.
+void notifyNoSpeaker();
 void notifySpeakerAddress(String address);
 
 void notifyVolumeGetSuccess(int volume);

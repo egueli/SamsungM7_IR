@@ -4,6 +4,7 @@
 #include "speaker.h"
 #include "http_xml.h"
 #include "serial.h"
+#include "wifi.h"
 
 String speakerIpAddress;
 
@@ -25,6 +26,16 @@ const String kMuteCloseTag = "</mute>";
 const String kMuteOn = "on";
 
 void setupSpeaker() {
+}
+
+void loopSpeaker() {
+  if (!isWifiConnected()) {
+    return;
+  }
+  
+  if (speakerIpAddress.isEmpty()) {
+    notifyNoSpeaker();
+  }
 }
 
 void setSpeakerAddress(String address) {

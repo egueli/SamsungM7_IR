@@ -6,11 +6,19 @@ const char kDisplayErrorCodeVolume = 'v';
 const char kDisplayErrorCodeAux = 't';
 const char kDisplayErrorCodeMute = 'n';
 
-void notifyNoWifi() {
+void animate(char ch) {
   String text = "    ";
   int dashPos = (millis() / 600) % 4;
-  text[dashPos] = '-';
+  text[dashPos] = ch;
   displayText(text);
+}
+
+void notifyNoWifi() {
+  animate('-');
+}
+
+void notifyNoSpeaker() {
+  animate('o');
 }
 
 void notifySpeakerAddress(String address) {

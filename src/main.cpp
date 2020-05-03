@@ -29,6 +29,7 @@ void loop() {
   loopWifi();
   loopDisplay();
   loopDiscovery();
+  loopSpeaker();
 }
 
 void onDiscoveryFinished(String address) {
