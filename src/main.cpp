@@ -17,11 +17,11 @@ void setup() {
   USE_SERIAL.println();
   USE_SERIAL.println();
 
+  setupDisplay();
   setupWifi();
   setupDiscovery();
   setupIR();
   setupSpeaker();
-  setupDisplay();
 }
 
 void loop() {
