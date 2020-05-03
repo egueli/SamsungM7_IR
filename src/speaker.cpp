@@ -6,10 +6,6 @@
 #include "serial.h"
 #include "wifi.h"
 
-String speakerIpAddress;
-
-asyncHTTPrequest request;
-
 const int kGetVolumeError = -1;
 const String kVolumeOpenTag = "<volume>";
 const String kVolumeCloseTag = "</volume>";
@@ -25,6 +21,15 @@ const String kMuteOpenTag = "<mute>";
 const String kMuteCloseTag = "</mute>";
 const String kMuteOn = "on";
 
+const unsigned long kSpeakerAddressIpCheckInterval = 30000;
+const unsigned int kSpeakerAddressIpCheckRetries = 3;
+
+String speakerIpAddress;
+unsigned long lastSpeakerIpAddressCheck;
+unsigned int speakerAddressCheckRetry;
+
+asyncHTTPrequest request;
+
 void setupSpeaker() {
 }
 
@@ -32,7 +37,9 @@ void loopSpeaker() {
   if (!isWifiConnected()) {
     return;
   }
-  
+
+  checkSpeakerIpAddress();
+
   if (speakerIpAddress.isEmpty()) {
     notifyNoSpeaker();
   }
@@ -41,6 +48,7 @@ void loopSpeaker() {
 void setSpeakerAddress(String address) {
   notifySpeakerAddress(address);
   speakerIpAddress = address;
+  lastSpeakerIpAddressCheck = millis();
 }
 
 bool getQueryUrl(String &output, String command) {
@@ -48,8 +56,7 @@ bool getQueryUrl(String &output, String command) {
     return false;
   }
 
-  output = "http://" + speakerIpAddress + ":55001/UIC?cmd="
-      "%3Cname%3E" + command + "%3C/name%3E";
+  output = "http://" + speakerIpAddress + ":55001/UIC?cmd=%3Cname%3E" + command + "%3C/name%3E";
   
   return true;
 }
@@ -271,4 +278,47 @@ bool toggleMute() {
   USE_SERIAL.println(!isMuted ? "on" : "off");
   notifyMuteSetSuccess(!isMuted);
   return true;
+}
+
+bool isSpeakerAddressValid() {
+  USE_SERIAL.print("speaker ip valid? ");
+  String url;
+  if (!getQueryUrl(url, "GetVolume")) {
+    USE_SERIAL.println("no: unknown address");
+    return false;
+  }
+
+  request.open("GET", url.c_str());
+  request.send();
+
+  String valueString;
+  bool success = getValueFromHttp(request, valueString, kVolumeOpenTag, kVolumeCloseTag);
+  USE_SERIAL.println(success ? "yes" : "no");
+  if (!success) {
+    return false;
+  }
+
+  return true;
+}
+
+void checkSpeakerIpAddress() {
+  if (!isWifiConnected()) {
+      speakerAddressCheckRetry = 0;
+  }
+
+  if (millis() < lastSpeakerIpAddressCheck + kSpeakerAddressIpCheckInterval) {
+    return;
+  }
+  lastSpeakerIpAddressCheck = millis();
+
+  bool valid = isSpeakerAddressValid();
+  if (valid) {
+    speakerAddressCheckRetry = 0;
+  } else {
+    speakerAddressCheckRetry++;
+    if (speakerAddressCheckRetry >= kSpeakerAddressIpCheckRetries) {
+      USE_SERIAL.println("too many speaker check retries, restarting");
+      ESP.restart();
+    }
+  }
 }

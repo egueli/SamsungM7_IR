@@ -10,6 +10,7 @@ void increaseVolume();
 void decreaseVolume(); 
 bool setAux();
 bool toggleMute();
+void checkSpeakerIpAddress();
 
 // The functions below are callbacks. Their definition must be in a file other than speaker.cpp.
 void notifyNoSpeaker();
