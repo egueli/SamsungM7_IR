@@ -9,7 +9,7 @@ const unsigned long kTextDisplayDuration = 1500;
 const byte kSegmentsWiring[] = { 4, 6, 1, 3, 7, 2, 0, 5 };
 
 //                          10^3  2  1  0
-const byte kDigitsWiring[] = { 2, 4, 1, 0 };
+const byte kDigitsWiring[] = { 2, 6, 4, 0 };
 
 const byte kNumChars = 24;
 const byte kDisplayFont[kNumChars][2] = {
@@ -90,7 +90,6 @@ void displayText(String text) {
 
 void setupDisplay() {
   ledMatrix.init();
-  ledMatrix.sendByte(MAX7219_REG_SCANLIMIT, 4);   // show only 4 digits
 
   ledMatrix.clear();
   ledMatrix.commit();
