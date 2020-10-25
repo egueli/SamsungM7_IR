@@ -7,6 +7,7 @@
 #include "speaker.h"
 #include "http_xml.h"
 #include "display.h"
+#include "volume.h"
 
 void setup() {
 

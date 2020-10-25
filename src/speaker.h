@@ -6,8 +6,21 @@ void setupSpeaker();
 void loopSpeaker();
 void setSpeakerAddress(String address);
 
-void increaseVolume();
-void decreaseVolume(); 
+extern const int kGetVolumeError;
+
+/** 
+ * Queries the speaker for the current volume level.
+ * \return the volume level from 0 to 30, or kGetVolumeError if an error occurred.
+ */
+int getVolume();
+
+/**
+ * Set the speaker volume.
+ * \param newVolume the desired volume from 0 to 30. Note that no bounds check is made.
+ * \return true if the set was successful, false otherwise.
+ */
+bool setVolume(int newVolume);
+
 bool setAux();
 bool toggleMute();
 void checkSpeakerIpAddress();

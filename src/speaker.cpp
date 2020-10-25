@@ -6,7 +6,8 @@
 #include "serial.h"
 #include "wifi.h"
 
-const int kGetVolumeError = -1;
+extern const int kGetVolumeError = -1;
+
 const String kVolumeOpenTag = "<volume>";
 const String kVolumeCloseTag = "</volume>";
 
@@ -89,7 +90,7 @@ int getVolumeFromHttp() {
 int getVolume() {
   String url;
   if (!getQueryUrl(url, "GetVolume")) {
-    return false;
+    return kGetVolumeError;
   }
 
   request.open("GET", url.c_str());
@@ -122,50 +123,6 @@ bool setVolume(int newVolume) {
   request.open("GET", url.c_str());
   request.send();
   return checkSuccess();
-}
-
-bool setVolumeDelta(int delta) {
-  USE_SERIAL.print("... ");
-  int volume = getVolume();
-  if (volume == kGetVolumeError) {
-    notifyVolumeGetFail();
-    return false;
-  }
-  notifyVolumeGetSuccess(volume);
-  int newVolume = volume + delta;
-  // prevent going out of bounds
-  newVolume = constrain(newVolume, 0, 30);
-  USE_SERIAL.print(volume);
-  USE_SERIAL.print(" => ");
-  USE_SERIAL.print(newVolume);
-  USE_SERIAL.print(" ");
-  bool success;
-  if (newVolume == volume) {
-    // skip an HTTP request just to set the same volume
-    USE_SERIAL.print("(skip) ");
-    success = true;
-  } else {
-    USE_SERIAL.print(" ... ");
-    success = setVolume(newVolume);
-  }
-  if (success) {
-    notifyVolumeSetSuccess(newVolume);
-  } else {
-    notifyVolumeSetFail();
-  }
-  return success;
-}
-
-void increaseVolume() {
-  USE_SERIAL.print("VOL+ ");
-  bool success = setVolumeDelta(1);
-  USE_SERIAL.println(success ? "OK" : "fail :(");
-}
-
-void decreaseVolume() {
-  USE_SERIAL.print("VOL- ");
-  bool success = setVolumeDelta(-3);
-  USE_SERIAL.println(success ? "OK" : "fail :(");
 }
 
 // return value is success/failure; actual output is in param reference
