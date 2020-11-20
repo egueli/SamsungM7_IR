@@ -4,7 +4,7 @@
 
 #include "ir.h"
 #include "serial.h"
-#include "pins.h"
+#include "board.h"
 
 const uint16_t kIrCaptureBufferSize = 1024;
 const uint8_t kIrTimeout = 15;

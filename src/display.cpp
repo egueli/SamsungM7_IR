@@ -1,6 +1,6 @@
 #include <SPI.h>
 #include "LedMatrix.h"
-#include "pins.h"
+#include "board.h"
 
 const unsigned long kTextDisplayDuration = 1500;
 

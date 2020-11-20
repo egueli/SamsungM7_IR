@@ -4,7 +4,7 @@
 #include "wifi.h"
 #include "wifi_credentials.h"
 #include "serial.h"
-#include "pins.h"
+#include "board.h"
 
 const unsigned long kWifiConnectTimeout = 20000;
 
