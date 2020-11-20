@@ -16,3 +16,16 @@ D5   3   MAX7219:13
 D7   2   MAX7219:1
 D1   1   TSOP1738:3
 */
+
+
+//                               dp G  F  E  D  C  B  A
+const byte kSegmentsWiring[] = { 4, 6, 1, 3, 7, 2, 0, 5 };
+
+//                          10^3  2  1  0
+const byte kDigitsWiring[] = { 2, 6, 4, 0 };
+
+/**
+ * The MAX7219 will drive up to this number of displays.
+ * Must not be lower than the maximum item in kDigitsWiring.
+ */
+const byte kDisplayScanLimit = 6;

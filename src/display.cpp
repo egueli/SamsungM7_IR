@@ -4,13 +4,6 @@
 
 const unsigned long kTextDisplayDuration = 1500;
 
-
-//                               dp G  F  E  D  C  B  A
-const byte kSegmentsWiring[] = { 4, 6, 1, 3, 7, 2, 0, 5 };
-
-//                          10^3  2  1  0
-const byte kDigitsWiring[] = { 2, 6, 4, 0 };
-
 const byte kNumChars = 24;
 const byte kDisplayFont[kNumChars][2] = {
   // ch    ABCDEFGd
@@ -90,6 +83,7 @@ void displayText(String text) {
 
 void setupDisplay() {
   ledMatrix.init();
+  ledMatrix.sendByte(MAX7219_REG_SCANLIMIT, kDisplayScanLimit);
 
   ledMatrix.clear();
   ledMatrix.commit();
