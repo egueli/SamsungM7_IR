@@ -3,10 +3,10 @@
 
 #include "serial.h"
 
-bool setVolumeDelta(int delta) {
+bool setVolumeDelta(Speaker& speaker, int delta) {
   USE_SERIAL.print("... ");
-  int volume = getVolume();
-  if (volume == kGetVolumeError) {
+  int volume = speaker.getVolume();
+  if (volume == Speaker::kGetVolumeError) {
     notifyVolumeGetFail();
     return false;
   }
@@ -25,7 +25,7 @@ bool setVolumeDelta(int delta) {
     success = true;
   } else {
     USE_SERIAL.print(" ... ");
-    success = setVolume(newVolume);
+    success = speaker.setVolume(newVolume);
   }
   if (success) {
     notifyVolumeSetSuccess(newVolume);
@@ -35,14 +35,14 @@ bool setVolumeDelta(int delta) {
   return success;
 }
 
-void increaseVolume() {
+void increaseVolume(Speaker& speaker) {
   USE_SERIAL.print("VOL+ ");
-  bool success = setVolumeDelta(1);
+  bool success = setVolumeDelta(speaker, 1);
   USE_SERIAL.println(success ? "OK" : "fail :(");
 }
 
-void decreaseVolume() {
+void decreaseVolume(Speaker& speaker) {
   USE_SERIAL.print("VOL- ");
-  bool success = setVolumeDelta(-3);
+  bool success = setVolumeDelta(speaker, -3);
   USE_SERIAL.println(success ? "OK" : "fail :(");
 }

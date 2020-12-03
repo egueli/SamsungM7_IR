@@ -9,6 +9,8 @@
 #include "display.h"
 #include "volume.h"
 
+Speaker speaker;
+
 void setup() {
 
   USE_SERIAL.begin(115200);
@@ -22,7 +24,7 @@ void setup() {
   setupWifi();
   setupDiscovery();
   setupIR();
-  setupSpeaker();
+  speaker.setup();
 }
 
 void loop() {
@@ -30,11 +32,11 @@ void loop() {
   loopWifi();
   loopDisplay();
   loopDiscovery();
-  loopSpeaker();
+  speaker.loop();
 }
 
 void onDiscoveryFinished(String address) {
-  setSpeakerAddress(address);
+  speaker.setAddress(address);
 }
 
 void onHttpWait() {
@@ -42,17 +44,17 @@ void onHttpWait() {
 }
 
 void onVolumeUp() {
-  increaseVolume();
+  increaseVolume(speaker);
 }
 
 void onVolumeDown() {
-  decreaseVolume();
+  decreaseVolume(speaker);
 }
 
 void onTvRad() {
-  setAux();
+  speaker.setAux();
 }
 
 void onMute() {
-  toggleMute();
+  speaker.toggleMute();
 }
