@@ -143,7 +143,7 @@ bool Speaker::isInputSourceAux(bool &isAux) {
   return true;
 }
 
-bool Speaker::setAux() {
+bool Speaker::setTvInput() {
   bool isAux;
   {
     bool success = isInputSourceAux(isAux);

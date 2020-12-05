@@ -52,7 +52,7 @@ void onVolumeDown() {
 }
 
 void onTvRad() {
-  speaker.setAux();
+  speaker.setTvInput();
 }
 
 void onMute() {
