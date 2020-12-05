@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "http_xml.h"
 
 /**
  * Controls an IP-accessible audio speaker.

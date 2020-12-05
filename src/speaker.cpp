@@ -3,6 +3,7 @@
 
 #include "speaker.h"
 #include "http_xml.h"
+#include "http_wait.h"
 #include "serial.h"
 #include "wifi.h"
 
