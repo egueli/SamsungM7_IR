@@ -1,6 +1,7 @@
 #pragma once
 
 #include "speaker.h"
+#include <asyncHTTPrequest.h>
 
 /**
  * Controls an IP-accessible audio speaker.
@@ -29,5 +30,11 @@ private:
     bool setMute(bool muteStatus);
     bool isSpeakerAddressValid();
     void checkSpeakerIpAddress();
+
+    String speakerIpAddress;
+    unsigned long lastSpeakerIpAddressCheck;
+    unsigned int speakerAddressCheckRetry;
+
+    asyncHTTPrequest request;
 };
 

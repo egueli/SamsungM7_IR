@@ -24,12 +24,6 @@ const String kMuteOn = "on";
 const unsigned long kSpeakerAddressIpCheckInterval = 30000;
 const unsigned int kSpeakerAddressIpCheckRetries = 3;
 
-String speakerIpAddress;
-unsigned long lastSpeakerIpAddressCheck;
-unsigned int speakerAddressCheckRetry;
-
-asyncHTTPrequest request;
-
 void SamsungMultiroomSpeaker::setup() {
 }
 
