@@ -7,7 +7,35 @@
 #include <map>
 #include <set>
 
-const char * kServiceQuestion = "_spotify-connect._tcp.local";
+#define SPEAKER_MUSICCAST
+
+const char *kSpeakerMdnsServiceQuestion =
+#ifdef SPEAKER_MUSICCAST
+    "_http._tcp.local"
+#else
+    "_spotify-connect._tcp.local"
+#endif
+    ;
+
+
+const char *kSpeakerServiceName =
+#ifdef SPEAKER_MUSICCAST
+    "Living Room"
+#else
+    nullptr
+#endif
+    ;
+
+/**
+ * The MDNS query to send the network to find the speaker.
+ */
+const char *kServiceQuestion = kSpeakerMdnsServiceQuestion;
+
+/**
+ * The name of the MDNS service identifying a specific speaker. This must be unique in the network.
+ * A null value means that any service is OK; one of them will be picked up.
+ */
+const char *kServiceName = kSpeakerServiceName;
 const unsigned int kMaxMDNSPacketSize = 512;
 byte buffer[kMaxMDNSPacketSize];
 
@@ -116,6 +144,24 @@ void sendQuery(unsigned int type, const char *queryName)
     my_mdns.Send();
 }
 
+bool serviceNameMatches(String &service)
+{
+    if (!kServiceName)
+    {
+        return true;
+    }
+
+    const int indexOfFirstDot = service.indexOf(".");
+    if (indexOfFirstDot == -1)
+    {
+        // dot not found, so actually the passed service may be malformed
+        return false;
+    }
+
+    const String serviceName = service.substring(0, indexOfFirstDot);
+    return serviceName.equalsIgnoreCase(kServiceName);
+}
+
 void loopDiscovery()
 {
     // Did we do our job already?
@@ -140,15 +186,19 @@ void loopDiscovery()
     for (auto service : services)
     {
         auto hostIt = serviceToHost.find(service);
+
         if (hostIt != serviceToHost.end())
         {
             String host = hostIt->second;
             auto addrIt = hostToAddress.find(host);
             if (addrIt != hostToAddress.end())
             {
-                ipAddress = addrIt->second;
-                Serial.printf("FOUND service '%s' at host '%s' with address '%s'\n", service.c_str(), host.c_str(), ipAddress.c_str());
-                onDiscoveryFinished(ipAddress);
+                if (serviceNameMatches(service))
+                {
+                    ipAddress = addrIt->second;
+                    Serial.printf("FOUND service '%s' at host '%s' with address '%s'\n", service.c_str(), host.c_str(), addrIt->second.c_str());
+                    onDiscoveryFinished(ipAddress);
+                }
             }
         }
     }
