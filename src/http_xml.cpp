@@ -2,6 +2,7 @@
 #include <asyncHTTPrequest.h>
 
 #include "http_xml.h"
+#include "http_wait.h"
 #include "serial.h"
 
 const unsigned long kHttpTimeout = 5000;

@@ -6,5 +6,3 @@
 bool parseValueInXML(String document, String &output, String openTag, String closeTag);
 bool getValueFromHttp(asyncHTTPrequest &request, String &output, String openTag, String closeTag);
 
-// Callbacks. To be implemented elsewhere.
-void onHttpWait();

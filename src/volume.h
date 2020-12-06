@@ -1,4 +1,6 @@
 #pragma once
 
-void increaseVolume();
-void decreaseVolume(); 
+#include "speaker.h"
+
+void increaseVolume(Speaker& speaker);
+void decreaseVolume(Speaker& speaker); 

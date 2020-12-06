@@ -5,9 +5,13 @@
 #include "wifi.h"
 #include "discovery.h"
 #include "speaker.h"
+#include "speaker_samsung_multiroom.h"
 #include "http_xml.h"
 #include "display.h"
 #include "volume.h"
+
+SamsungMultiroomSpeaker multiroom = SamsungMultiroomSpeaker{};
+Speaker &speaker = multiroom;
 
 void setup() {
 
@@ -22,7 +26,7 @@ void setup() {
   setupWifi();
   setupDiscovery();
   setupIR();
-  setupSpeaker();
+  speaker.setup();
 }
 
 void loop() {
@@ -30,11 +34,11 @@ void loop() {
   loopWifi();
   loopDisplay();
   loopDiscovery();
-  loopSpeaker();
+  speaker.loop();
 }
 
 void onDiscoveryFinished(String address) {
-  setSpeakerAddress(address);
+  speaker.setAddress(address);
 }
 
 void onHttpWait() {
@@ -42,17 +46,17 @@ void onHttpWait() {
 }
 
 void onVolumeUp() {
-  increaseVolume();
+  increaseVolume(speaker);
 }
 
 void onVolumeDown() {
-  decreaseVolume();
+  decreaseVolume(speaker);
 }
 
 void onTvRad() {
-  setAux();
+  speaker.setTvInput();
 }
 
 void onMute() {
-  toggleMute();
+  speaker.toggleMute();
 }
