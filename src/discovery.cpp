@@ -13,12 +13,14 @@ byte buffer[kMaxMDNSPacketSize];
 
 bool querySent;
 
-const size_t kMaxEntries = 4;
+const size_t kMaxEntries = 16;
 std::set<String> services;
 std::map<String, String> serviceToHost;
 std::map<String, String> hostToAddress;
 
 String ipAddress;
+
+void dumpServices();
 
 // When an mDNS packet gets parsed this callback gets called once per Query.
 // See mdns.h for definition of mdns::Query.
@@ -133,6 +135,8 @@ void loopDiscovery()
     }
     my_mdns.loop();
 
+    dumpServices();
+
     for (auto service : services)
     {
         auto hostIt = serviceToHost.find(service);
@@ -148,4 +152,33 @@ void loopDiscovery()
             }
         }
     }
+}
+
+void dumpServices()
+{
+    static unsigned long lastDumpAt;
+    unsigned long now = millis();
+    if (now < lastDumpAt + 1000L)
+    {
+        return;
+    }
+    lastDumpAt = now;
+
+    Serial.printf("services map has now %d entries\n", services.size());
+    for (auto service : services)
+    {
+        Serial.printf("  service '%s'\n", service.c_str());
+    }
+    Serial.printf("serviceToHost map has now %d entries\n", serviceToHost.size());
+    for (auto serviceToHostEntry : serviceToHost)
+    {
+        Serial.printf("  service '%s' to host '%s'\n", serviceToHostEntry.first.c_str(), serviceToHostEntry.second.c_str());
+    }
+    Serial.printf("hostToAddress map has now %d entries\n", hostToAddress.size());
+    for (auto hostToAddressEntry : hostToAddress)
+    {
+        Serial.printf("  host '%s' to address '%s'\n", hostToAddressEntry.first.c_str(), hostToAddressEntry.second.c_str());
+    }
+
+    Serial.printf("---------\n");
 }
