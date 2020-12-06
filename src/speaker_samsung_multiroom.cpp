@@ -40,7 +40,6 @@ void SamsungMultiroomSpeaker::loop() {
 }
 
 void SamsungMultiroomSpeaker::setAddress(String address) {
-  notifySpeakerAddress(address);
   speakerIpAddress = address;
   lastSpeakerIpAddressCheck = millis();
 }

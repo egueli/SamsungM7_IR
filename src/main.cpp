@@ -38,6 +38,7 @@ void loop() {
 }
 
 void onDiscoveryFinished(String address) {
+  notifySpeakerAddress(address);
   speaker.setAddress(address);
 }
 
