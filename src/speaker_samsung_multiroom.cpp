@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <asyncHTTPrequest.h>
 
-#include "speaker.h"
+#include "speaker_samsung_multiroom.h"
 #include "http_xml.h"
 #include "http_wait.h"
 #include "serial.h"
@@ -30,10 +30,10 @@ unsigned int speakerAddressCheckRetry;
 
 asyncHTTPrequest request;
 
-void Speaker::setup() {
+void SamsungMultiroomSpeaker::setup() {
 }
 
-void Speaker::loop() {
+void SamsungMultiroomSpeaker::loop() {
   if (!isWifiConnected()) {
     return;
   }
@@ -45,13 +45,13 @@ void Speaker::loop() {
   }
 }
 
-void Speaker::setAddress(String address) {
+void SamsungMultiroomSpeaker::setAddress(String address) {
   notifySpeakerAddress(address);
   speakerIpAddress = address;
   lastSpeakerIpAddressCheck = millis();
 }
 
-bool Speaker::getQueryUrl(String &output, String command) {
+bool SamsungMultiroomSpeaker::getQueryUrl(String &output, String command) {
   if (speakerIpAddress.isEmpty()) {
     return false;
   }
@@ -61,7 +61,7 @@ bool Speaker::getQueryUrl(String &output, String command) {
   return true;
 }
 
-bool Speaker::getSingleParamCommandUrl(String &output, String command, String paramType, String paramName, String paramValue) {
+bool SamsungMultiroomSpeaker::getSingleParamCommandUrl(String &output, String command, String paramType, String paramName, String paramValue) {
   if (speakerIpAddress.isEmpty()) {
     return false;
   }
@@ -77,7 +77,7 @@ bool Speaker::getSingleParamCommandUrl(String &output, String command, String pa
   return true;
 }
 
-int Speaker::getVolumeFromHttp() {
+int SamsungMultiroomSpeaker::getVolumeFromHttp() {
   String valueString;
   bool success = getValueFromHttp(request, valueString, kVolumeOpenTag, kVolumeCloseTag);
   if (!success) {
@@ -86,7 +86,7 @@ int Speaker::getVolumeFromHttp() {
   return valueString.toInt();
 }
 
-int Speaker::getVolume() {
+int SamsungMultiroomSpeaker::getVolume() {
   String url;
   if (!getQueryUrl(url, "GetVolume")) {
     return kGetVolumeError;
@@ -98,7 +98,7 @@ int Speaker::getVolume() {
   return volume;
 }
 
-bool Speaker::checkSuccess() {
+bool SamsungMultiroomSpeaker::checkSuccess() {
   while (request.readyState() != 4) {
     yield();
     onHttpWait();
@@ -113,7 +113,7 @@ bool Speaker::checkSuccess() {
   return true;
 }
 
-bool Speaker::setVolume(int newVolume) {
+bool SamsungMultiroomSpeaker::setVolume(int newVolume) {
   String url;
   if (!getSingleParamCommandUrl(url, "SetVolume", "dec", "volume", String(newVolume))) {
     return false;
@@ -125,7 +125,7 @@ bool Speaker::setVolume(int newVolume) {
 }
 
 // return value is success/failure; actual output is in param reference
-bool Speaker::isInputSourceAux(bool &isAux) {
+bool SamsungMultiroomSpeaker::isInputSourceAux(bool &isAux) {
   String url;
   if (!getQueryUrl(url, "GetFunc")) {
     return false;
@@ -144,7 +144,7 @@ bool Speaker::isInputSourceAux(bool &isAux) {
   return true;
 }
 
-bool Speaker::setTvInput() {
+bool SamsungMultiroomSpeaker::setTvInput() {
   bool isAux;
   {
     bool success = isInputSourceAux(isAux);
@@ -181,7 +181,7 @@ bool Speaker::setTvInput() {
   return success;
 }
 
-bool Speaker::getMute(bool &muteStatus) {
+bool SamsungMultiroomSpeaker::getMute(bool &muteStatus) {
   String url;
   if (!getQueryUrl(url, "GetMute")) {
     return false;
@@ -201,7 +201,7 @@ bool Speaker::getMute(bool &muteStatus) {
 }
 
 
-bool Speaker::setMute(bool muteStatus) {
+bool SamsungMultiroomSpeaker::setMute(bool muteStatus) {
   String url;
   if (!getSingleParamCommandUrl(url, "SetMute", "str", "mute", muteStatus ? "on" : "off")) {
     return false;
@@ -211,7 +211,7 @@ bool Speaker::setMute(bool muteStatus) {
   return checkSuccess();
 }
 
-bool Speaker::toggleMute() {
+bool SamsungMultiroomSpeaker::toggleMute() {
   bool isMuted;
   USE_SERIAL.print("Mute: ");
   bool getSuccess = getMute(isMuted);
@@ -236,7 +236,7 @@ bool Speaker::toggleMute() {
   return true;
 }
 
-bool Speaker::isSpeakerAddressValid() {
+bool SamsungMultiroomSpeaker::isSpeakerAddressValid() {
   USE_SERIAL.print("speaker ip valid? ");
   String url;
   if (!getQueryUrl(url, "GetVolume")) {
@@ -257,7 +257,7 @@ bool Speaker::isSpeakerAddressValid() {
   return true;
 }
 
-void Speaker::checkSpeakerIpAddress() {
+void SamsungMultiroomSpeaker::checkSpeakerIpAddress() {
   if (!isWifiConnected()) {
       speakerAddressCheckRetry = 0;
   }

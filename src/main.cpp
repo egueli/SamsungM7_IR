@@ -5,11 +5,13 @@
 #include "wifi.h"
 #include "discovery.h"
 #include "speaker.h"
+#include "speaker_samsung_multiroom.h"
 #include "http_xml.h"
 #include "display.h"
 #include "volume.h"
 
-Speaker speaker;
+SamsungMultiroomSpeaker multiroom = SamsungMultiroomSpeaker{};
+Speaker &speaker = multiroom;
 
 void setup() {
 
