@@ -9,7 +9,7 @@ struct Speaker {
     /**
      * Sets the IP address for this speaker.
      */
-    virtual void setAddress(String address) = 0;
+    virtual void setAddress(const String &address) = 0;
 
     /**
      * Checks if this speaker is still reachable at the current IP address.

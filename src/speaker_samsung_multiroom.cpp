@@ -21,7 +21,7 @@ const String kMuteOpenTag = "<mute>";
 const String kMuteCloseTag = "</mute>";
 const String kMuteOn = "on";
 
-void SamsungMultiroomSpeaker::setAddress(String address) {
+void SamsungMultiroomSpeaker::setAddress(const String &address) {
   speakerIpAddress = address;
 }
 
