@@ -2,7 +2,7 @@
 #include <asyncHTTPrequest.h>
 
 #include "speaker_samsung_multiroom.h"
-#include "http_xml.h"
+#include "http_response.h"
 #include "http_wait.h"
 #include "serial.h"
 #include "wifi.h"

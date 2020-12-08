@@ -7,7 +7,7 @@
 #include "speaker.h"
 #include "speaker_samsung_multiroom.h"
 #include "speaker_watchdog.h"
-#include "http_xml.h"
+#include "http_response.h"
 #include "display.h"
 #include "volume.h"
 

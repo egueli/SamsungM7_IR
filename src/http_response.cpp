@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <asyncHTTPrequest.h>
 
-#include "http_xml.h"
+#include "http_response.h"
 #include "http_wait.h"
 #include "serial.h"
 
@@ -22,7 +22,7 @@ bool parseValueInXML(String document, String &output, String openTag, String clo
   return true;
 }
 
-bool getValueFromHttp(asyncHTTPrequest &request, String &output, String openTag, String closeTag) {
+bool waitForHttpOkResponse(asyncHTTPrequest &request) {
   unsigned long startAt = millis();
 
   while (request.readyState() != 4) {
@@ -42,6 +42,14 @@ bool getValueFromHttp(asyncHTTPrequest &request, String &output, String openTag,
     return false;
   }
 
+  return true;
+}
+
+bool getValueFromHttp(asyncHTTPrequest &request, String &output, String openTag, String closeTag) {
+  if (!waitForHttpOkResponse(request)) {
+    return false;
+  }
+  
   String body = request.responseText();
   bool success = parseValueInXML(body, output, openTag, closeTag);
   if (!success) {
