@@ -8,18 +8,6 @@
  */
 struct Speaker {
     /**
-     * Initializes the speaker.
-     */
-    virtual void setup() = 0;
-
-    /**
-     * Checks that the speaker is still reachable via the current IP address.
-     * Restarts the system after too many failed attempts to connect.
-     * To be called in the idle loop.
-     */
-    virtual void loop() = 0;
-
-    /**
      * Sets the IP address for this speaker.
      */
     virtual void setAddress(String address) = 0;

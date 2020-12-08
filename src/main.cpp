@@ -28,7 +28,6 @@ void setup() {
   setupWifi();
   setupDiscovery();
   setupIR();
-  speaker.setup();
 }
 
 void loop() {
@@ -36,7 +35,6 @@ void loop() {
   loopWifi();
   loopDisplay();
   loopDiscovery();
-  speaker.loop();
   watchdog.loop();
 }
 

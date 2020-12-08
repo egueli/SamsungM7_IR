@@ -8,9 +8,6 @@
  */
 class SamsungMultiroomSpeaker : public Speaker {
 public:
-    void setup();
-    void loop();
-
     void setAddress(String address);
     bool isAddressValid();
 
