@@ -25,6 +25,13 @@ struct Speaker {
     virtual void setAddress(String address) = 0;
 
     /**
+     * Checks if this speaker is still reachable at the current IP address.
+     * This function will make an HTTP request and will call onHttpWait() while waiting for the response.
+     * \return true if it is reachable, false otherwise.
+     */
+    virtual bool isAddressValid() = 0;
+
+    /**
      * Special value returned by getVolume() when a connection error occurred.
      */
     static const int kGetVolumeError = -1;

@@ -6,12 +6,14 @@
 #include "discovery.h"
 #include "speaker.h"
 #include "speaker_samsung_multiroom.h"
+#include "speaker_watchdog.h"
 #include "http_xml.h"
 #include "display.h"
 #include "volume.h"
 
-SamsungMultiroomSpeaker multiroom = SamsungMultiroomSpeaker{};
+SamsungMultiroomSpeaker multiroom;
 Speaker &speaker = multiroom;
+SpeakerWatchdog watchdog(speaker);
 
 void setup() {
 
@@ -35,11 +37,13 @@ void loop() {
   loopDisplay();
   loopDiscovery();
   speaker.loop();
+  watchdog.loop();
 }
 
 void onDiscoveryFinished(String address) {
   notifySpeakerAddress(address);
   speaker.setAddress(address);
+  watchdog.setAddress(address);
 }
 
 void onHttpWait() {

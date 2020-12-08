@@ -10,7 +10,9 @@ class SamsungMultiroomSpeaker : public Speaker {
 public:
     void setup();
     void loop();
+
     void setAddress(String address);
+    bool isAddressValid();
 
     int getVolume();
     bool setVolume(int newVolume);
@@ -28,12 +30,9 @@ private:
     bool isInputSourceAux(bool &isAux);
     bool getMute(bool &muteStatus);
     bool setMute(bool muteStatus);
-    bool isSpeakerAddressValid();
     void checkSpeakerIpAddress();
 
     String speakerIpAddress;
-    unsigned long lastSpeakerIpAddressCheck;
-    unsigned int speakerAddressCheckRetry;
 
     asyncHTTPrequest request;
 };

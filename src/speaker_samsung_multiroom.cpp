@@ -21,27 +21,15 @@ const String kMuteOpenTag = "<mute>";
 const String kMuteCloseTag = "</mute>";
 const String kMuteOn = "on";
 
-const unsigned long kSpeakerAddressIpCheckInterval = 30000;
-const unsigned int kSpeakerAddressIpCheckRetries = 3;
 
 void SamsungMultiroomSpeaker::setup() {
 }
 
 void SamsungMultiroomSpeaker::loop() {
-  if (!isWifiConnected()) {
-    return;
-  }
-
-  checkSpeakerIpAddress();
-
-  if (speakerIpAddress.isEmpty()) {
-    notifyNoSpeaker();
-  }
 }
 
 void SamsungMultiroomSpeaker::setAddress(String address) {
   speakerIpAddress = address;
-  lastSpeakerIpAddressCheck = millis();
 }
 
 bool SamsungMultiroomSpeaker::getQueryUrl(String &output, String command) {
@@ -229,7 +217,7 @@ bool SamsungMultiroomSpeaker::toggleMute() {
   return true;
 }
 
-bool SamsungMultiroomSpeaker::isSpeakerAddressValid() {
+bool SamsungMultiroomSpeaker::isAddressValid() {
   USE_SERIAL.print("speaker ip valid? ");
   String url;
   if (!getQueryUrl(url, "GetVolume")) {
@@ -248,26 +236,4 @@ bool SamsungMultiroomSpeaker::isSpeakerAddressValid() {
   }
 
   return true;
-}
-
-void SamsungMultiroomSpeaker::checkSpeakerIpAddress() {
-  if (!isWifiConnected()) {
-      speakerAddressCheckRetry = 0;
-  }
-
-  if (millis() < lastSpeakerIpAddressCheck + kSpeakerAddressIpCheckInterval) {
-    return;
-  }
-  lastSpeakerIpAddressCheck = millis();
-
-  bool valid = isSpeakerAddressValid();
-  if (valid) {
-    speakerAddressCheckRetry = 0;
-  } else {
-    speakerAddressCheckRetry++;
-    if (speakerAddressCheckRetry >= kSpeakerAddressIpCheckRetries) {
-      USE_SERIAL.println("too many speaker check retries, restarting");
-      ESP.restart();
-    }
-  }
 }
