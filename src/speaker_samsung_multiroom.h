@@ -4,7 +4,7 @@
 #include <asyncHTTPrequest.h>
 
 /**
- * Controls an IP-accessible audio speaker.
+ * Controls a Samsung Multiroom compatible speaker like Samsung M7 (WAM750).
  */
 class SamsungMultiroomSpeaker : public Speaker {
 public:
