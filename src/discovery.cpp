@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "mdns.h"
 #include "wifi.h"
 #include "discovery.h"
@@ -7,22 +9,20 @@
 #include <map>
 #include <set>
 
-#define SPEAKER_MUSICCAST
-
 const char *kSpeakerMdnsServiceQuestion =
-#ifdef SPEAKER_MUSICCAST
-    "_http._tcp.local"
-#else
+#ifdef SPEAKER_MULTIROOM
     "_spotify-connect._tcp.local"
+#else
+    "_http._tcp.local"
 #endif
     ;
 
 
 const char *kSpeakerServiceName =
-#ifdef SPEAKER_MUSICCAST
-    "Living Room"
-#else
+#ifdef SPEAKER_MULTIROOM
     nullptr
+#else
+    "Living Room"
 #endif
     ;
 
