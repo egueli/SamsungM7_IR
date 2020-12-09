@@ -6,11 +6,6 @@ const unsigned int kSpeakerAddressIpCheckRetries = 3;
 
 void SpeakerWatchdog::loop()
 {
-    if (!isWifiConnected())
-    {
-        return;
-    }
-
     checkIpAddress();
 
     if (ipAddress.isEmpty())
