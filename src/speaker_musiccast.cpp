@@ -51,7 +51,15 @@ int MusicCastSpeaker::getVolume()
 
 bool MusicCastSpeaker::setVolume(int newVolume)
 {
-    return true;
+    String url;
+    if (!getBaseUrl(url, "setVolume?volume=" + String(newVolume)))
+    {
+        return false;
+    }
+
+    request.open("GET", url.c_str());
+    request.send();
+    return checkSuccess();
 }
 
 bool MusicCastSpeaker::setTvInput()
@@ -76,5 +84,31 @@ bool MusicCastSpeaker::getBaseUrl(String &output, const String &endPart)
     }
 
     output = "http://" + ipAddress + "/YamahaExtendedControl/v1/main/" + endPart;
+    return true;
+}
+
+bool MusicCastSpeaker::checkSuccess()
+{
+    if (!waitForHttpOkResponse(request))
+    {
+        return false;
+    }
+
+    String body = request.responseText();
+    DynamicJsonDocument doc(384);
+    DeserializationError jsonError = deserializeJson(doc, body);
+    if (jsonError)
+    {
+        Serial.printf("Response JSON deserialization error: %s\n", jsonError.c_str());
+        return false;
+    }
+
+    int responseCode = doc["response_code"];
+    if (responseCode != 0)
+    {
+        Serial.printf("non-zero YXC response code %d\n", responseCode);
+        return false;
+    }
+
     return true;
 }

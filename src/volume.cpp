@@ -7,9 +7,13 @@
 #ifdef SAMSUNG_MULTIROOM
 const int kMinVolume = 0;
 const int kMaxVolume = 30;
+const int kVolumeUpStep = 1;
+const int kVolumeDownStep = -3;
 #else
 const int kMinVolume = 1;
 const int kMaxVolume = 161;
+const int kVolumeUpStep = 2;
+const int kVolumeDownStep = -2;
 #endif
 
 bool setVolumeDelta(Speaker& speaker, int delta) {
@@ -46,12 +50,12 @@ bool setVolumeDelta(Speaker& speaker, int delta) {
 
 void increaseVolume(Speaker& speaker) {
   USE_SERIAL.print("VOL+ ");
-  bool success = setVolumeDelta(speaker, 1);
+  bool success = setVolumeDelta(speaker, kVolumeUpStep);
   USE_SERIAL.println(success ? "OK" : "fail :(");
 }
 
 void decreaseVolume(Speaker& speaker) {
   USE_SERIAL.print("VOL- ");
-  bool success = setVolumeDelta(speaker, -3);
+  bool success = setVolumeDelta(speaker, kVolumeDownStep);
   USE_SERIAL.println(success ? "OK" : "fail :(");
 }
