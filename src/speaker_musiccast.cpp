@@ -1,5 +1,6 @@
 #include "speaker_musiccast.h"
 #include "http_response.h"
+#include <ArduinoJson.h>
 
 void MusicCastSpeaker::setAddress(const String &address)
 {
@@ -22,7 +23,30 @@ bool MusicCastSpeaker::isAddressValid()
 
 int MusicCastSpeaker::getVolume()
 {
-    return 0;
+    String url;
+    if (!getBaseUrl(url, "getStatus"))
+    {
+        return kGetVolumeError;
+    }
+
+    request.open("GET", url.c_str());
+    request.send();
+
+    if (!waitForHttpOkResponse(request))
+    {
+        return kGetVolumeError;
+    }
+
+    String body = request.responseText();
+    DynamicJsonDocument doc(384);
+    DeserializationError jsonError = deserializeJson(doc, body);
+    if (jsonError)
+    {
+        Serial.printf("JSON deserialization error: %s\n", jsonError.c_str());
+        return kGetVolumeError;
+    }
+
+    return doc["volume"];
 }
 
 bool MusicCastSpeaker::setVolume(int newVolume)
