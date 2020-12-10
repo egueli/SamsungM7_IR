@@ -211,10 +211,8 @@ bool SamsungMultiroomSpeaker::toggleMute() {
 }
 
 bool SamsungMultiroomSpeaker::isAddressValid() {
-  USE_SERIAL.print("speaker ip valid? ");
   String url;
   if (!getQueryUrl(url, "GetVolume")) {
-    USE_SERIAL.println("no: unknown address");
     return false;
   }
 
@@ -223,7 +221,6 @@ bool SamsungMultiroomSpeaker::isAddressValid() {
 
   String valueString;
   bool success = getValueFromHttp(request, valueString, kVolumeOpenTag, kVolumeCloseTag);
-  USE_SERIAL.println(success ? "yes" : "no");
   if (!success) {
     return false;
   }

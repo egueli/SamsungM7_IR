@@ -33,7 +33,9 @@ void SpeakerWatchdog::checkIpAddress()
     }
     lastSpeakerIpAddressCheck = millis();
 
+    Serial.print("speaker ip valid? ");
     bool valid = speaker.isAddressValid();
+    Serial.println(valid ? "yes" : "no");
     if (valid)
     {
         speakerAddressCheckRetry = 0;
