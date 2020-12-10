@@ -13,10 +13,10 @@
 Uncomment this to use the Samsung Multiroom (legacy) instead of
 Yamaha MusicCast protocol.
 */
-//#define SPEAKER_MULTIROOM
+#define SPEAKER_MULTIROOM
 
 // IR codes for the remote control being used.
-#if 0
+#if 1
 // My LG TV remote control
 const uint64_t kIrVolumeUpCode = 0x20DF40BF;
 const uint64_t kIrVolumeDownCode = 0x20DFC03F;
