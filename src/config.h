@@ -13,7 +13,7 @@
 Uncomment this to use the Samsung Multiroom (legacy) instead of
 Yamaha MusicCast protocol.
 */
-#define SPEAKER_MULTIROOM
+//#define SPEAKER_MULTIROOM
 
 // IR codes for the remote control being used.
 #if 1
