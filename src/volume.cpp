@@ -2,6 +2,15 @@
 #include "speaker.h"
 
 #include "serial.h"
+#include "config.h"
+
+#ifdef SAMSUNG_MULTIROOM
+const int kMinVolume = 0;
+const int kMaxVolume = 30;
+#else
+const int kMinVolume = 1;
+const int kMaxVolume = 161;
+#endif
 
 bool setVolumeDelta(Speaker& speaker, int delta) {
   USE_SERIAL.print("... ");
@@ -13,7 +22,7 @@ bool setVolumeDelta(Speaker& speaker, int delta) {
   notifyVolumeGetSuccess(volume);
   int newVolume = volume + delta;
   // prevent going out of bounds
-  newVolume = constrain(newVolume, 0, 30);
+  newVolume = constrain(newVolume, kMinVolume, kMaxVolume);
   USE_SERIAL.print(volume);
   USE_SERIAL.print(" => ");
   USE_SERIAL.print(newVolume);
