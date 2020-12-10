@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "mdns.h"
 #include "wifi.h"
 #include "discovery.h"
@@ -7,18 +9,45 @@
 #include <map>
 #include <set>
 
-const char * kServiceQuestion = "_spotify-connect._tcp.local";
+const char *kSpeakerMdnsServiceQuestion =
+#ifdef SPEAKER_MULTIROOM
+    "_spotify-connect._tcp.local"
+#else
+    "_http._tcp.local"
+#endif
+    ;
+
+const char *kSpeakerServiceName =
+#ifdef SPEAKER_MULTIROOM
+    nullptr
+#else
+    "Living Room"
+#endif
+    ;
+
+/**
+ * The MDNS query to send the network to find the speaker.
+ */
+const char *kServiceQuestion = kSpeakerMdnsServiceQuestion;
+
+/**
+ * The name of the MDNS service identifying a specific speaker. This must be unique in the network.
+ * A null value means that any service is OK; one of them will be picked up.
+ */
+const char *kServiceName = kSpeakerServiceName;
 const unsigned int kMaxMDNSPacketSize = 512;
 byte buffer[kMaxMDNSPacketSize];
 
 bool querySent;
 
-const size_t kMaxEntries = 4;
+const size_t kMaxEntries = 16;
 std::set<String> services;
 std::map<String, String> serviceToHost;
 std::map<String, String> hostToAddress;
 
 String ipAddress;
+
+void dumpServices();
 
 // When an mDNS packet gets parsed this callback gets called once per Query.
 // See mdns.h for definition of mdns::Query.
@@ -114,6 +143,24 @@ void sendQuery(unsigned int type, const char *queryName)
     my_mdns.Send();
 }
 
+bool serviceNameMatches(String &service)
+{
+    if (!kServiceName)
+    {
+        return true;
+    }
+
+    const int indexOfFirstDot = service.indexOf(".");
+    if (indexOfFirstDot == -1)
+    {
+        // dot not found, so actually the passed service may be malformed
+        return false;
+    }
+
+    const String serviceName = service.substring(0, indexOfFirstDot);
+    return serviceName.equalsIgnoreCase(kServiceName);
+}
+
 void loopDiscovery()
 {
     // Did we do our job already?
@@ -133,19 +180,54 @@ void loopDiscovery()
     }
     my_mdns.loop();
 
+    dumpServices();
+
     for (auto service : services)
     {
         auto hostIt = serviceToHost.find(service);
+
         if (hostIt != serviceToHost.end())
         {
             String host = hostIt->second;
             auto addrIt = hostToAddress.find(host);
             if (addrIt != hostToAddress.end())
             {
-                ipAddress = addrIt->second;
-                Serial.printf("FOUND service '%s' at host '%s' with address '%s'\n", service.c_str(), host.c_str(), ipAddress.c_str());
-                onDiscoveryFinished(ipAddress);
+                if (serviceNameMatches(service))
+                {
+                    ipAddress = addrIt->second;
+                    Serial.printf("FOUND service '%s' at host '%s' with address '%s'\n", service.c_str(), host.c_str(), addrIt->second.c_str());
+                    onDiscoveryFinished(ipAddress);
+                }
             }
         }
     }
+}
+
+void dumpServices()
+{
+    static unsigned long lastDumpAt;
+    unsigned long now = millis();
+    if (now < lastDumpAt + 1000L)
+    {
+        return;
+    }
+    lastDumpAt = now;
+
+    Serial.printf("services map has now %d entries\n", services.size());
+    for (auto service : services)
+    {
+        Serial.printf("  service '%s'\n", service.c_str());
+    }
+    Serial.printf("serviceToHost map has now %d entries\n", serviceToHost.size());
+    for (auto serviceToHostEntry : serviceToHost)
+    {
+        Serial.printf("  service '%s' to host '%s'\n", serviceToHostEntry.first.c_str(), serviceToHostEntry.second.c_str());
+    }
+    Serial.printf("hostToAddress map has now %d entries\n", hostToAddress.size());
+    for (auto hostToAddressEntry : hostToAddress)
+    {
+        Serial.printf("  host '%s' to address '%s'\n", hostToAddressEntry.first.c_str(), hostToAddressEntry.second.c_str());
+    }
+
+    Serial.printf("---------\n");
 }

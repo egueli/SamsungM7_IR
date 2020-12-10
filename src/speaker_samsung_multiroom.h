@@ -1,15 +1,15 @@
 #pragma once
 
 #include "speaker.h"
+#include <asyncHTTPrequest.h>
 
 /**
- * Controls an IP-accessible audio speaker.
+ * Controls a Samsung Multiroom compatible speaker like Samsung M7 (WAM750).
  */
 class SamsungMultiroomSpeaker : public Speaker {
 public:
-    void setup();
-    void loop();
-    void setAddress(String address);
+    void setAddress(const String &address);
+    bool isAddressValid();
 
     int getVolume();
     bool setVolume(int newVolume);
@@ -27,7 +27,10 @@ private:
     bool isInputSourceAux(bool &isAux);
     bool getMute(bool &muteStatus);
     bool setMute(bool muteStatus);
-    bool isSpeakerAddressValid();
     void checkSpeakerIpAddress();
+
+    String speakerIpAddress;
+
+    asyncHTTPrequest request;
 };
 

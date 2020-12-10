@@ -2,7 +2,7 @@
 #include <asyncHTTPrequest.h>
 
 #include "speaker_samsung_multiroom.h"
-#include "http_xml.h"
+#include "http_response.h"
 #include "http_wait.h"
 #include "serial.h"
 #include "wifi.h"
@@ -21,34 +21,8 @@ const String kMuteOpenTag = "<mute>";
 const String kMuteCloseTag = "</mute>";
 const String kMuteOn = "on";
 
-const unsigned long kSpeakerAddressIpCheckInterval = 30000;
-const unsigned int kSpeakerAddressIpCheckRetries = 3;
-
-String speakerIpAddress;
-unsigned long lastSpeakerIpAddressCheck;
-unsigned int speakerAddressCheckRetry;
-
-asyncHTTPrequest request;
-
-void SamsungMultiroomSpeaker::setup() {
-}
-
-void SamsungMultiroomSpeaker::loop() {
-  if (!isWifiConnected()) {
-    return;
-  }
-
-  checkSpeakerIpAddress();
-
-  if (speakerIpAddress.isEmpty()) {
-    notifyNoSpeaker();
-  }
-}
-
-void SamsungMultiroomSpeaker::setAddress(String address) {
-  notifySpeakerAddress(address);
+void SamsungMultiroomSpeaker::setAddress(const String &address) {
   speakerIpAddress = address;
-  lastSpeakerIpAddressCheck = millis();
 }
 
 bool SamsungMultiroomSpeaker::getQueryUrl(String &output, String command) {
@@ -236,11 +210,9 @@ bool SamsungMultiroomSpeaker::toggleMute() {
   return true;
 }
 
-bool SamsungMultiroomSpeaker::isSpeakerAddressValid() {
-  USE_SERIAL.print("speaker ip valid? ");
+bool SamsungMultiroomSpeaker::isAddressValid() {
   String url;
   if (!getQueryUrl(url, "GetVolume")) {
-    USE_SERIAL.println("no: unknown address");
     return false;
   }
 
@@ -249,32 +221,9 @@ bool SamsungMultiroomSpeaker::isSpeakerAddressValid() {
 
   String valueString;
   bool success = getValueFromHttp(request, valueString, kVolumeOpenTag, kVolumeCloseTag);
-  USE_SERIAL.println(success ? "yes" : "no");
   if (!success) {
     return false;
   }
 
   return true;
-}
-
-void SamsungMultiroomSpeaker::checkSpeakerIpAddress() {
-  if (!isWifiConnected()) {
-      speakerAddressCheckRetry = 0;
-  }
-
-  if (millis() < lastSpeakerIpAddressCheck + kSpeakerAddressIpCheckInterval) {
-    return;
-  }
-  lastSpeakerIpAddressCheck = millis();
-
-  bool valid = isSpeakerAddressValid();
-  if (valid) {
-    speakerAddressCheckRetry = 0;
-  } else {
-    speakerAddressCheckRetry++;
-    if (speakerAddressCheckRetry >= kSpeakerAddressIpCheckRetries) {
-      USE_SERIAL.println("too many speaker check retries, restarting");
-      ESP.restart();
-    }
-  }
 }

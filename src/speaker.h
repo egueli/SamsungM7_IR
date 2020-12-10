@@ -1,28 +1,22 @@
 #pragma once
 
 #include <Arduino.h>
-#include "http_xml.h"
 
 /**
  * Controls an IP-accessible audio speaker.
  */
 struct Speaker {
     /**
-     * Initializes the speaker.
-     */
-    virtual void setup() = 0;
-
-    /**
-     * Checks that the speaker is still reachable via the current IP address.
-     * Restarts the system after too many failed attempts to connect.
-     * To be called in the idle loop.
-     */
-    virtual void loop() = 0;
-
-    /**
      * Sets the IP address for this speaker.
      */
-    virtual void setAddress(String address) = 0;
+    virtual void setAddress(const String &address) = 0;
+
+    /**
+     * Checks if this speaker is still reachable at the current IP address.
+     * This function will make an HTTP request and will call onHttpWait() while waiting for the response.
+     * \return true if it is reachable, false otherwise.
+     */
+    virtual bool isAddressValid() = 0;
 
     /**
      * Special value returned by getVolume() when a connection error occurred.

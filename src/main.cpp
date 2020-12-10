@@ -1,17 +1,27 @@
 #include <Arduino.h>
 
+#include "config.h"
 #include "ir.h"
 #include "serial.h"
 #include "wifi.h"
 #include "discovery.h"
 #include "speaker.h"
-#include "speaker_samsung_multiroom.h"
-#include "http_xml.h"
+#include "speaker_watchdog.h"
+#include "http_response.h"
 #include "display.h"
 #include "volume.h"
 
-SamsungMultiroomSpeaker multiroom = SamsungMultiroomSpeaker{};
+#ifdef SPEAKER_MULTIROOM
+#include "speaker_samsung_multiroom.h"
+SamsungMultiroomSpeaker multiroom;
 Speaker &speaker = multiroom;
+#else
+#include "speaker_musiccast.h"
+MusicCastSpeaker musicCast;
+Speaker &speaker = musicCast;
+#endif
+
+SpeakerWatchdog watchdog(speaker);
 
 void setup() {
 
@@ -26,7 +36,6 @@ void setup() {
   setupWifi();
   setupDiscovery();
   setupIR();
-  speaker.setup();
 }
 
 void loop() {
@@ -34,11 +43,13 @@ void loop() {
   loopWifi();
   loopDisplay();
   loopDiscovery();
-  speaker.loop();
+  watchdog.loop();
 }
 
 void onDiscoveryFinished(String address) {
+  notifySpeakerAddress(address);
   speaker.setAddress(address);
+  watchdog.setAddress(address);
 }
 
 void onHttpWait() {
