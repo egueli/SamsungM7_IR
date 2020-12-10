@@ -5,17 +5,13 @@
 #include "ir.h"
 #include "serial.h"
 #include "board.h"
+#include "config.h"
 
 const uint16_t kIrCaptureBufferSize = 1024;
 const uint8_t kIrTimeout = 15;
 const uint8_t kIrTolerance = 45;
 const uint8_t kIrMaxSkip = 5;
 const uint16_t kIrNoiseFloor = 300;
-
-const uint64_t kIrVolumeUpCode = 0x20DF40BF;
-const uint64_t kIrVolumeDownCode = 0x20DFC03F;
-const uint64_t kIrMuteCode = 0x20DF906F;
-const uint64_t kIrTvRadCode = 0x20DF0FF0;
 
 IRrecv irrecv(kIrRecvPin, kIrCaptureBufferSize, kIrTimeout, true);
 decode_results results; // can't pass it as parameter to function?
