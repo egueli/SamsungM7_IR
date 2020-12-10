@@ -1,6 +1,7 @@
 #pragma once
 
 #include <asyncHTTPrequest.h>
+#include <ArduinoJson.h>
 #include "speaker.h"
 
 /**
@@ -23,5 +24,6 @@ private:
     asyncHTTPrequest request;
     bool getBaseUrl(String &output, const String &endPart);
     bool checkSuccess();
+    bool getStatus(DynamicJsonDocument &outputDoc);
 };
 

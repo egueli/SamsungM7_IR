@@ -1,6 +1,5 @@
 #include "speaker_musiccast.h"
 #include "http_response.h"
-#include <ArduinoJson.h>
 
 void MusicCastSpeaker::setAddress(const String &address)
 {
@@ -23,31 +22,14 @@ bool MusicCastSpeaker::isAddressValid()
 
 int MusicCastSpeaker::getVolume()
 {
-    String url;
-    if (!getBaseUrl(url, "getStatus"))
-    {
-        return kGetVolumeError;
-    }
-
-    request.open("GET", url.c_str());
-    request.send();
-
-    if (!waitForHttpOkResponse(request))
-    {
-        return kGetVolumeError;
-    }
-
-    String body = request.responseText();
     DynamicJsonDocument doc(384);
-    DeserializationError jsonError = deserializeJson(doc, body);
-    if (jsonError)
-    {
-        Serial.printf("JSON deserialization error: %s\n", jsonError.c_str());
+    if (!getStatus(doc)) {
         return kGetVolumeError;
     }
 
     return doc["volume"];
 }
+
 
 bool MusicCastSpeaker::setVolume(int newVolume)
 {
@@ -107,6 +89,33 @@ bool MusicCastSpeaker::checkSuccess()
     if (responseCode != 0)
     {
         Serial.printf("non-zero YXC response code %d\n", responseCode);
+        return false;
+    }
+
+    return true;
+}
+
+bool MusicCastSpeaker::getStatus(DynamicJsonDocument &outputDoc)
+{
+    String url;
+    if (!getBaseUrl(url, "getStatus"))
+    {
+        return false;
+    }
+
+    request.open("GET", url.c_str());
+    request.send();
+
+    if (!waitForHttpOkResponse(request))
+    {
+        return false;
+    }
+
+    String body = request.responseText();
+    DeserializationError jsonError = deserializeJson(outputDoc, body);
+    if (jsonError)
+    {
+        Serial.printf("JSON deserialization error: %s\n", jsonError.c_str());
         return false;
     }
 
