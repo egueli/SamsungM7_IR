@@ -17,7 +17,6 @@ const char *kSpeakerMdnsServiceQuestion =
 #endif
     ;
 
-
 const char *kSpeakerServiceName =
 #ifdef SPEAKER_MULTIROOM
     nullptr
