@@ -4,18 +4,6 @@
 #include "serial.h"
 #include "config.h"
 
-#ifdef SAMSUNG_MULTIROOM
-const int kMinVolume = 0;
-const int kMaxVolume = 30;
-const int kVolumeUpStep = 1;
-const int kVolumeDownStep = -3;
-#else
-const int kMinVolume = 1;
-const int kMaxVolume = 161;
-const int kVolumeUpStep = 2;
-const int kVolumeDownStep = -2;
-#endif
-
 bool setVolumeDelta(Speaker& speaker, int delta) {
   USE_SERIAL.print("... ");
   int volume = speaker.getVolume();
