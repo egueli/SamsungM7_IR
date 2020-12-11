@@ -17,7 +17,7 @@ Yamaha MusicCast protocol.
 
 
 
-#ifdef SAMSUNG_MULTIROOM
+#ifdef SPEAKER_MULTIROOM
 const int kMinVolume = 0;
 const int kMaxVolume = 30;
 const int kVolumeUpStep = 1;
