@@ -155,7 +155,7 @@ bool SamsungMultiroomSpeaker::setTvInput() {
   return success;
 }
 
-bool SamsungMultiroomSpeaker::getMute(bool &muteStatus) {
+bool SamsungMultiroomSpeaker::getMuteStatus(bool &muteStatus) {
   String url;
   if (!getQueryUrl(url, "GetMute")) {
     return false;
@@ -175,7 +175,7 @@ bool SamsungMultiroomSpeaker::getMute(bool &muteStatus) {
 }
 
 
-bool SamsungMultiroomSpeaker::setMute(bool muteStatus) {
+bool SamsungMultiroomSpeaker::setMuteStatus(const bool muteStatus) {
   String url;
   if (!getSingleParamCommandUrl(url, "SetMute", "str", "mute", muteStatus ? "on" : "off")) {
     return false;
@@ -183,31 +183,6 @@ bool SamsungMultiroomSpeaker::setMute(bool muteStatus) {
   request.open("GET", url.c_str());
   request.send();
   return checkSuccess();
-}
-
-bool SamsungMultiroomSpeaker::toggleMute() {
-  bool isMuted;
-  USE_SERIAL.print("Mute: ");
-  bool getSuccess = getMute(isMuted);
-  if (!getSuccess) {
-    USE_SERIAL.println("unable to get mute state");
-    notifyMuteGetFail();
-    return false;
-  }
-  notifyMuteGetSuccess();
-  USE_SERIAL.print(isMuted ? "on" : "off");
-  USE_SERIAL.print(" => ");
-
-  bool setSuccess = setMute(!isMuted);
-  if (!setSuccess) {
-    USE_SERIAL.println("fail :(");
-    notifyMuteSetFail();
-    return false;
-  }
-
-  USE_SERIAL.println(!isMuted ? "on" : "off");
-  notifyMuteSetSuccess(!isMuted);
-  return true;
 }
 
 bool SamsungMultiroomSpeaker::isAddressValid() {

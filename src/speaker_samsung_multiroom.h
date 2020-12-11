@@ -16,7 +16,8 @@ public:
 
     bool setTvInput();
 
-    bool toggleMute();
+    bool getMuteStatus(bool &muteStatus);
+    bool setMuteStatus(const bool muteStatus);
 
 private:
     bool getQueryUrl(String &output, String command);
@@ -25,8 +26,6 @@ private:
     int getVolumeFromHttp();
     bool checkSuccess();
     bool isInputSourceAux(bool &isAux);
-    bool getMute(bool &muteStatus);
-    bool setMute(bool muteStatus);
     void checkSpeakerIpAddress();
 
     String speakerIpAddress;

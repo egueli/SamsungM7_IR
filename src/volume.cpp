@@ -59,3 +59,29 @@ void decreaseVolume(Speaker& speaker) {
   bool success = setVolumeDelta(speaker, kVolumeDownStep);
   USE_SERIAL.println(success ? "OK" : "fail :(");
 }
+
+
+bool toggleMute(Speaker &speaker) {
+  bool isMuted;
+  USE_SERIAL.print("Mute: ");
+  bool getSuccess = speaker.getMuteStatus(isMuted);
+  if (!getSuccess) {
+    USE_SERIAL.println("unable to get mute state");
+    notifyMuteGetFail();
+    return false;
+  }
+  notifyMuteGetSuccess();
+  USE_SERIAL.print(isMuted ? "on" : "off");
+  USE_SERIAL.print(" => ");
+
+  bool setSuccess = speaker.setMuteStatus(!isMuted);
+  if (!setSuccess) {
+    USE_SERIAL.println("fail :(");
+    notifyMuteSetFail();
+    return false;
+  }
+
+  USE_SERIAL.println(!isMuted ? "on" : "off");
+  notifyMuteSetSuccess(!isMuted);
+  return true;
+}

@@ -69,5 +69,5 @@ void onTvRad() {
 }
 
 void onMute() {
-  speaker.toggleMute();
+  toggleMute(speaker);
 }
