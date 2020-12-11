@@ -23,7 +23,7 @@ public:
 private:
     String ipAddress;
     asyncHTTPrequest request;
-    bool getBaseUrl(String &output, const String &endPart);
+    bool getZoneUrl(String &output, const String &endPart);
     bool checkSuccess();
     bool getStatus(DynamicJsonDocument &outputDoc);
 };

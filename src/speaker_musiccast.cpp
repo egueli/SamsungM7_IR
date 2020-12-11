@@ -9,7 +9,7 @@ void MusicCastSpeaker::setAddress(const String &address)
 bool MusicCastSpeaker::isAddressValid()
 {
     String url;
-    if (!getBaseUrl(url, "getStatus"))
+    if (!getZoneUrl(url, "getStatus"))
     {
         return false;
     }
@@ -34,7 +34,7 @@ int MusicCastSpeaker::getVolume()
 bool MusicCastSpeaker::setVolume(int newVolume)
 {
     String url;
-    if (!getBaseUrl(url, "setVolume?volume=" + String(newVolume)))
+    if (!getZoneUrl(url, "setVolume?volume=" + String(newVolume)))
     {
         return false;
     }
@@ -63,7 +63,7 @@ bool MusicCastSpeaker::getMuteStatus(bool &outStatus)
 bool MusicCastSpeaker::setMuteStatus(const bool newMuteStatus)
 {
     String url;
-    if (!getBaseUrl(url, newMuteStatus ? "setMute?enable=true" : "setMute?enable=false"))
+    if (!getZoneUrl(url, newMuteStatus ? "setMute?enable=true" : "setMute?enable=false"))
     {
         return false;
     }
@@ -74,10 +74,10 @@ bool MusicCastSpeaker::setMuteStatus(const bool newMuteStatus)
 }
 
 /**
- * Puts the base URL to send requests to the speaker
+ * Puts the base URL to send zone-based requests to the speaker
  * \return true if the IP address is known and a URL can be constructed, false otherwise.
  */
-bool MusicCastSpeaker::getBaseUrl(String &output, const String &endPart)
+bool MusicCastSpeaker::getZoneUrl(String &output, const String &endPart)
 {
     if (ipAddress.isEmpty())
     {
@@ -117,7 +117,7 @@ bool MusicCastSpeaker::checkSuccess()
 bool MusicCastSpeaker::getStatus(DynamicJsonDocument &outputDoc)
 {
     String url;
-    if (!getBaseUrl(url, "getStatus"))
+    if (!getZoneUrl(url, "getStatus"))
     {
         return false;
     }
