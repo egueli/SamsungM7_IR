@@ -20,10 +20,13 @@ decode_results results; // can't pass it as parameter to function?
 // which code has been repeated. UINT64_MAX means no code has been received yet.
 uint64_t currentIrCode = UINT64_MAX;
 
-// Holds the next IR code to call callbacks for. Set by peekIR() and consumed by consumeIR().
+// Holds the next IR code to call callbacks for, and the repeat flag. Set by peekIR() and consumed by consumeIR().
 // If peekIR() decodes multiple messages before consumeIR() is called, only the last
 // message should be kept. Once consumerIR() is done with this code, it sets it to UINT64_MAX.
-uint64_t irCodeToProcess = UINT64_MAX;
+struct {
+  uint64_t code;
+  bool repeat;
+} irCodeToProcess = { UINT64_MAX, false };
 
 void peekIR() {
   bool haveNewMessage = irrecv.decode(&results, NULL, kIrMaxSkip, kIrNoiseFloor);
@@ -33,7 +36,7 @@ void peekIR() {
 
   if (results.overflow) {
     USE_SERIAL.print("[ir:OVERFLOW]");
-    currentIrCode = irCodeToProcess = UINT64_MAX;
+    currentIrCode = irCodeToProcess.code = UINT64_MAX;
     return;
   }
 
@@ -41,26 +44,26 @@ void peekIR() {
     USE_SERIAL.printf("[ir:UNKNOWN(%d)]", results.rawlen);
     // USE_SERIAL.println();
     // USE_SERIAL.println(resultToSourceCode(&results));
-    currentIrCode = irCodeToProcess = UINT64_MAX;
+    currentIrCode = irCodeToProcess.code = UINT64_MAX;
     return;
   }
 
   if (results.repeat) {
-    irCodeToProcess = currentIrCode;
+    irCodeToProcess = { currentIrCode, true };
     USE_SERIAL.print("[ir:RPT]");
   } else {
-    irCodeToProcess = results.value;
+    irCodeToProcess = { results.value, false };
     currentIrCode = results.value;
     USE_SERIAL.printf("[ir:%llx]", results.value);
   }
 }
 
 void consumeIR() {
-  if (irCodeToProcess == UINT64_MAX) {
+  if (irCodeToProcess.code == UINT64_MAX) {
     return;
   }
 
-  switch (irCodeToProcess) {
+  switch (irCodeToProcess.code) {
     case kIrVolumeUpCode:
       notifyIR();
       onVolumeUp();
@@ -70,19 +73,25 @@ void consumeIR() {
       onVolumeDown();
       break;
     case kIrTvRadCode:
-      notifyIR();
-      onTvRad();
+      if (!irCodeToProcess.repeat)
+      {
+        notifyIR();
+        onTvRad();
+      }
       break;
     case kIrMuteCode:
-      notifyIR();
-      onMute();
+      if (!irCodeToProcess.repeat)
+      {
+        notifyIR();
+        onMute();
+      }
       break;
     default:
-      serialPrintUint64(irCodeToProcess, HEX);
+      serialPrintUint64(irCodeToProcess.code, HEX);
       Serial.println();
   }
 
-  irCodeToProcess = UINT64_MAX;
+  irCodeToProcess = { UINT64_MAX, false };
 }
 
 void setupIR() {
