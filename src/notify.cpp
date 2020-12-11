@@ -75,6 +75,10 @@ void notifyTv(bool wasSet) {
   displayText(wasSet ? " tv." : " tv");
 }
 
+void notifyTvFail() {
+  notifyAuxSetFail();
+}
+
 void notifyAuxGetSuccess(bool isAux) {
   notifyTv(false);
 }

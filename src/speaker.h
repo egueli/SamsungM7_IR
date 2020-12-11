@@ -40,6 +40,7 @@ struct Speaker {
 
     /**
      * Sets the speaker's audio input to the TV corresponding to the IR remote being used.
+     * Will call notify* functions to indicate the progress.
      * This function will make an HTTP request and will call onHttpWait() while waiting for the response.
      * \return true if the set was successful, false otherwise.
      */
@@ -77,6 +78,9 @@ void notifyAuxGetSuccess(bool isAux);
 void notifyAuxGetFail();
 void notifyAuxSetSuccess(bool isAux);
 void notifyAuxSetFail();
+
+void notifyTv(bool wasSet);
+void notifyTvFail();
 
 void notifyMuteGetSuccess();
 void notifyMuteGetFail();

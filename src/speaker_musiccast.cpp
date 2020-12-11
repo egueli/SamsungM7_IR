@@ -57,15 +57,26 @@ bool MusicCastSpeaker::setTvInput()
     }
 
     Serial.print("Setting input to Optical1... ");
+    notifyTv(false);
     request.open("GET", url.c_str());
     request.send();
     if (!checkSuccess()) 
     {
+        notifyTvFail();
         return false;
     }
 
     Serial.println("OK. Setting speakers A/B... ");
-    return setABSpeakers();
+    bool success = setABSpeakers();
+    if (success)
+    {
+        notifyTv(true);
+    }
+    else
+    {
+        notifyTvFail();
+    }
+    return success;
 }
 
 bool MusicCastSpeaker::setABSpeakers() 
