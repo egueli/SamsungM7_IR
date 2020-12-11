@@ -44,8 +44,53 @@ bool MusicCastSpeaker::setVolume(int newVolume)
     return checkSuccess();
 }
 
+/**
+ * In addition to setting the input to the optical input (where TV audio comes from),
+ * this also configures the A/B speakers so to use the speakers near to the TV.
+ */
 bool MusicCastSpeaker::setTvInput()
 {
+    String url;
+    if (!getZoneUrl(url, "setInput?input=optical1"))
+    {
+        return false;
+    }
+
+    Serial.print("Setting input to Optical1... ");
+    request.open("GET", url.c_str());
+    request.send();
+    if (!checkSuccess()) 
+    {
+        return false;
+    }
+
+    Serial.println("OK. Setting speakers A/B... ");
+    return setABSpeakers();
+}
+
+bool MusicCastSpeaker::setABSpeakers() 
+{
+    return setABSpeaker('A', false) && setABSpeaker('B', true);
+}
+
+bool MusicCastSpeaker::setABSpeaker(const char &letter, const bool enable) {
+    String command = "setSpeaker";
+    command += letter;
+    command += "?enable=";
+    command += enable ? "true" : "false";
+    String url;
+    if (!getSystemUrl(url, command))
+    {
+        return false;
+    }
+
+    Serial.println(url);
+    request.open("GET", url.c_str());
+    request.send();
+    if (!checkSuccess()) 
+    {
+        return false;
+    }
     return true;
 }
 
@@ -85,6 +130,21 @@ bool MusicCastSpeaker::getZoneUrl(String &output, const String &endPart)
     }
 
     output = "http://" + ipAddress + "/YamahaExtendedControl/v1/main/" + endPart;
+    return true;
+}
+
+/**
+ * Puts the base URL to send system-based requests to the speaker
+ * \return true if the IP address is known and a URL can be constructed, false otherwise.
+ */
+bool MusicCastSpeaker::getSystemUrl(String &output, const String &endPart)
+{
+    if (ipAddress.isEmpty())
+    {
+        return false;
+    }
+
+    output = "http://" + ipAddress + "/YamahaExtendedControl/v1/system/" + endPart;
     return true;
 }
 
