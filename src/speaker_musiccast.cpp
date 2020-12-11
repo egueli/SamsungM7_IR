@@ -49,9 +49,28 @@ bool MusicCastSpeaker::setTvInput()
     return true;
 }
 
-bool MusicCastSpeaker::toggleMute()
+bool MusicCastSpeaker::getMuteStatus(bool &outStatus)
 {
+    DynamicJsonDocument doc(384);
+    if (!getStatus(doc)) {
+        return false;
+    }
+
+    outStatus = doc["mute"];
     return true;
+}
+
+bool MusicCastSpeaker::setMuteStatus(const bool newMuteStatus)
+{
+    String url;
+    if (!getBaseUrl(url, newMuteStatus ? "setMute?enable=true" : "setMute?enable=false"))
+    {
+        return false;
+    }
+
+    request.open("GET", url.c_str());
+    request.send();
+    return checkSuccess();
 }
 
 /**

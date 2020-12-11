@@ -17,7 +17,8 @@ public:
 
     bool setTvInput();
 
-    bool toggleMute();
+    bool getMuteStatus(bool &outStatus);
+    bool setMuteStatus(const bool newMuteStatus);
 
 private:
     String ipAddress;
