@@ -40,17 +40,27 @@ struct Speaker {
 
     /**
      * Sets the speaker's audio input to the TV corresponding to the IR remote being used.
+     * Will call notify* functions to indicate the progress.
      * This function will make an HTTP request and will call onHttpWait() while waiting for the response.
      * \return true if the set was successful, false otherwise.
      */
     virtual bool setTvInput() = 0;
 
     /**
-     * Toggles the mute status of the speaker.
+     * Queries the speaker for the current mute status.
      * This function will make an HTTP request and will call onHttpWait() while waiting for the response.
-     * \return true if the toggle was successful, false otherwise.
+     * \param outStatus the variable that will contain the mute status. True means that the spaker is muted.
+     * \return true if the query was successful, false otherwise.
      */
-    virtual bool toggleMute() = 0;
+    virtual bool getMuteStatus(bool &outStatus) = 0;
+
+    /**
+     * Sets the speaker mute status.
+     * This function will make an HTTP request and will call onHttpWait() while waiting for the response.
+     * \param newMuteStatus the desired mute status. True means that the speaker is muted.
+     * \return true if the set was successful, false otherwise.
+     */
+    virtual bool setMuteStatus(const bool newMuteStatus) = 0;
 };
 
 
@@ -68,6 +78,9 @@ void notifyAuxGetSuccess(bool isAux);
 void notifyAuxGetFail();
 void notifyAuxSetSuccess(bool isAux);
 void notifyAuxSetFail();
+
+void notifyTv(bool wasSet);
+void notifyTvFail();
 
 void notifyMuteGetSuccess();
 void notifyMuteGetFail();

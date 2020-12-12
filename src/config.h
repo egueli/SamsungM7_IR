@@ -13,7 +13,21 @@
 Uncomment this to use the Samsung Multiroom (legacy) instead of
 Yamaha MusicCast protocol.
 */
-#define SPEAKER_MULTIROOM
+//#define SPEAKER_MULTIROOM
+
+
+
+#ifdef SPEAKER_MULTIROOM
+const int kMinVolume = 0;
+const int kMaxVolume = 30;
+const int kVolumeUpStep = 1;
+const int kVolumeDownStep = -3;
+#else
+const int kMinVolume = 1;
+const int kMaxVolume = 161;
+const int kVolumeUpStep = 2;
+const int kVolumeDownStep = -2;
+#endif
 
 // IR codes for the remote control being used.
 #if 1

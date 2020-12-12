@@ -1,27 +1,36 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-# Control a Samsung Multiroom speaker with a TV remote control
+# Control a network-enabled speaker with a TV remote control
 
-You may be interested in this repo if you:
+You may be interested in this project if:
 
-* Have a Samsung Multiroom M7 speaker (WAM250) or similar
-* You have its AUX input connected to a TV optical output (via an optical-to-analog converter)
-* Your TV doesn't allow you to control the volume when its sound goes to the optical output
-* Want to control it via the same remote control of your TV
-
-or you just wanna look around some C++ for ESP8266 code :)
+* You have a speaker or Hi-Fi set using the Yamaha MusicCast or Samsung Multiroom protocols
+* You have one of its inputs connected to a TV digital output
+* You want to control the speaker via the same remote control of your TV
+* Your TV disables volume control when the audio goes to the digital output
+* Your TV remote control is based on infrared (IR) signals
 
 ## Description
 
-Modern TVs can output their audio signal to optical/digital output instead of their internal speakers, so a user can use bigger speakers or e.g. a Dolby surround system. Because the output is digital and the volume is handled by another device, the TV cannot control it, assuming the other device will have its own volume controls. This means that the user will have to use two remote controls, one for the TV, one for the other device. This can be undesirable: it's annoying enough to find the TV remote in the couch while watching TV on a dark room. Unless the other device has better controls, the user might just want to use the same traditional volume controls (up/down/mute).
+Modern TVs can output their audio signal to digital output (optical/TOSLINK or RCA) instead of their internal speakers, so a user can use bigger speakers or e.g. a Dolby surround system. When doing so, a TV may ignore the volume controls because it expects the audio device to have its own volume control. The user has then to use two remote controls, one for the TV, one for the other device. This can be undesirable: it's annoying enough to find the TV remote in the couch while watching TV on a dark room. The user might just want to use the same traditional volume controls (up/down/mute) and use the other remote control for other tasks.
 
-In the case of a Samsung Multiroom device, there's no physical remote control but a companion app that controls it via Wi-Fi. To change the volume it's then necessary to have the smartphone and use the phone's volume controls. This may require you to unlock the phone, open the app and swipe on the screen. That's too many steps if you want to quickly turn the volume down.
+In the case of a Samsung Multiroom device, there's no physical remote control but a companion app that controls it via Wi-Fi. To change the volume it's then necessary to have a smartphone nearby and use the phone's volume controls. This may require you to unlock the phone, open the app and swipe on the screen. That's too many steps if you want to quickly turn the volume down.
 
-This project is my attempt to improve the user experience by allowing the same TV remote control to also control the Samsung speaker. It intercepts the IR signals from the TV remote control, and controls the Samsung speaker via its REST API while the TV is ignoring them.
+This project is my attempt to improve the user experience by allowing the same TV remote control to also control a network-enabled speaker. It intercepts the IR signals from the TV remote control, and controls the speaker via its REST API while the TV is ignoring them.
 
-The Samsung Multiroom speaker can accept multiple inputs: Bluetooth, various streaming services, Samsung TVs and analog AUX. Alas its control panel doesn't allow to select the AUX input; this can only be done by its companion app. To select AUX, an unused button on the LG TV remote (TV/RAD select) is repurposed to select the AUX input in case the speaker has been previously used for Bluetooth.
+The speaker may accept multiple inputs (Bluetooth, tuner, phono etc.), and it may be necessary to set the right input before using it for the TV. This device can listen to the press of an unused button on the TV remote (e.g. TV/radio select) to select the TV input.
 
-## How to use
+## Features
+
+* It listens to IR signals and sends HTTP requests.
+* It supports IR remote controls using the NEC IR protocol.
+* It supports speakers or amplifiers using Samsung Multiroom and Yamaha MusicCast protocols.
+* WiFi watchdog: resets itself if local wi-fi connection is lost;
+* MDNS/Bonjour: auto-discovery of the speaker IP address on the network; optionally a name can be provided to connect to a specific speaker;
+* Speaker watchdog: checks periodically that the speaker is still available at that address, and reset itself otherwise;
+* Volume and status output to a 7-segment display.
+
+## How to set up
 
 ### Hardware
 
@@ -36,29 +45,26 @@ You'll need the following:
 
 Also check out the `schematic` folder for the EAGLE schematic. I'm not providing a `.brd` file as I only made it for a perfboard and you might want/need a different technology.
 
-### Firmware
+### Building
 
-The firmware mainly takes care of decoding IR signals and translating them to REST requests. Other features:
-* WiFi watchdog: resets itself if connection is lost;
-* MDNS/Bonjour: auto-discovery of the speaker IP address on the network (assumes only one speaker is in the network, otherwise results are unpredictable);
-* Speaker watchdog: check periodically that the speaker is still available at that address, and reset itself otherwise;
-* Controlling a display for user feedback.
+The firmware is based on PlatformIO. A little configuration (see below) and a `pio run -t upload` should be enough to download the required libraries and build the firmware.
 
-The firmware needs PlatformIO to be built.
-
-#### Firmware configuration
+### Configuration
 
 Create a file `src/wifi_credentials.h` to enter your Wi-Fi crendentials. See details in `src/wifi.cpp`.
 
-#### IR codes
+In `config.h` file you can configure the IR commands and speaker protocol to use.
 
-The firmware is compatible with my LG smart TV remote control. It uses the NEC protocol. The following buttons are recognized:
+### IR codes
+
+The firmware is compatible with my LG smart TV remote control. The following buttons are recognized:
 
 * Volume up
 * Volume down
 * Mute
-* TV/RAD
+* TV/Radio
 
+To use a different remote control, open the serial monitor and look at the IR codes that are sent when you press the desired buttons. Then change the constants in `config.h` accordingly.
 
 ### Display
 

@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "speaker.h"
 #include "display.h"
+#include "config.h"
 
 const char kDisplayErrorCodeVolume = 'v';
 const char kDisplayErrorCodeAux = 't';
@@ -37,14 +38,20 @@ void notifyIR() {
 }
 
 void notifyVolume(int volume, bool wasSet) {
-  String text = " ";
-  if (volume < 10) {
-    text += " ";
-  }
-  text += volume;
-  if (wasSet) {
-    text += ".";
-  }
+  char text[6]; // 4 digits + 1 decimal point + 1 set confirmation dot
+  const char *setDot = wasSet ? "." : "";
+#ifdef SPEAKER_MULTIROOM
+  snprintf(text, 6, " %2d%s", volume, setDot);
+#else
+  /*
+   * MusicCast speakers may show the volume in dB, with 0dB beng the max and
+   * every step is a 0.5dB increment. Not sure if all speakers follow the
+   * same convention; the Yamaha R-N602 does.
+   */
+  float decibel = ((float)volume - kMaxVolume) / 2;
+  snprintf(text, 6, "% 4.1f%s", decibel, setDot);
+#endif
+  Serial.printf("notifyVolume: '%s'", text);
   displayText(text);
 }
 
@@ -73,6 +80,10 @@ void notifyVolumeSetFail() {
 
 void notifyTv(bool wasSet) {
   displayText(wasSet ? " tv." : " tv");
+}
+
+void notifyTvFail() {
+  notifyAuxSetFail();
 }
 
 void notifyAuxGetSuccess(bool isAux) {
