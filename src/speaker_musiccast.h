@@ -27,6 +27,7 @@ private:
     bool getSystemUrl(String &output, const String &endPart);
     bool checkSuccess();
     bool getStatus(DynamicJsonDocument &outputDoc);
+    bool powerOn();
     bool setABSpeakers();
     bool setABSpeaker(const char &letter, const bool enable);
 };
