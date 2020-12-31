@@ -30,6 +30,15 @@ The speaker may accept multiple inputs (Bluetooth, tuner, phono etc.), and it ma
 * Speaker watchdog: checks periodically that the speaker is still available at that address, and reset itself otherwise;
 * Volume and status output to a 7-segment display.
 
+### Buttons
+
+* The volume up/down buttons are recognized and work as expected.
+* Same for the Mute button. It toggles the mute state.
+* The TV/Radio button is repurposed it to set the speaker to select the TV input. I chose that one because I almost never watch broadcast TV.
+    * On MusicCast devices, this button also powers up the device if in standby and selects the B speaker set. This can be changed in source code.
+
+Samsung Multiroom devices may go on standby after 8 hours, and won't play any audio after that. To leave standby, just press any of the buttons above.
+
 ## How to set up
 
 ### Hardware
