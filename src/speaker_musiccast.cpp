@@ -47,17 +47,25 @@ bool MusicCastSpeaker::setVolume(int newVolume)
 /**
  * In addition to setting the input to the optical input (where TV audio comes from),
  * this also configures the A/B speakers so to use the speakers near to the TV.
+ * It also turns the power on from standby.
  */
 bool MusicCastSpeaker::setTvInput()
 {
+    Serial.print("Powering on (if on standby)... ");
+    notifyTv(false);
+    bool success = powerOn();
+    if (!success) {
+        notifyTvFail();
+        return false;        
+    }
+
     String url;
     if (!getZoneUrl(url, "setInput?input=optical1"))
     {
         return false;
     }
 
-    Serial.print("Setting input to Optical1... ");
-    notifyTv(false);
+    Serial.print("OK. Setting input to Optical1... ");
     request.open("GET", url.c_str());
     request.send();
     if (!checkSuccess()) 
@@ -67,7 +75,7 @@ bool MusicCastSpeaker::setTvInput()
     }
 
     Serial.println("OK. Setting speakers A/B... ");
-    bool success = setABSpeakers();
+    success = setABSpeakers();
     if (success)
     {
         notifyTv(true);
@@ -77,6 +85,19 @@ bool MusicCastSpeaker::setTvInput()
         notifyTvFail();
     }
     return success;
+}
+
+bool MusicCastSpeaker::powerOn()
+{
+    String url;
+    if (!getZoneUrl(url, "setPower?power=on"))
+    {
+        return false;
+    }
+    request.open("GET", url.c_str());
+    request.send();
+
+    return checkSuccess();
 }
 
 bool MusicCastSpeaker::setABSpeakers() 
@@ -98,11 +119,7 @@ bool MusicCastSpeaker::setABSpeaker(const char &letter, const bool enable) {
     Serial.println(url);
     request.open("GET", url.c_str());
     request.send();
-    if (!checkSuccess()) 
-    {
-        return false;
-    }
-    return true;
+    return checkSuccess();
 }
 
 bool MusicCastSpeaker::getMuteStatus(bool &outStatus)
