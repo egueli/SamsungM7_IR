@@ -1,6 +1,7 @@
-#include <SPI.h>
-#include "LedMatrix.h"
+#include <Arduino.h>
 #include "board.h"
+#include "seven_seg_display.h"
+#include "seven_seg_max7219.h"
 
 const unsigned long kTextDisplayDuration = 1500;
 
@@ -33,14 +34,14 @@ const byte kDisplayFont[kNumChars][2] = {
   { 'v', 0b00111000 },
 };
 
-LedMatrix ledMatrix = LedMatrix(1, kMax7219LoadPin);
+Max7219Display max7219Display(kMax7219LoadPin);
+SevenSegmentDisplay &display = max7219Display;
 
 unsigned long lastTextAt;
 
 void loopDisplay() {
   if (lastTextAt != 0 && millis() > lastTextAt + kTextDisplayDuration) {
-    ledMatrix.clear();
-    ledMatrix.commit();
+    display.clear();
     lastTextAt = 0;
   }
 }
@@ -55,39 +56,40 @@ byte getSegmentsOfChar(char c) {
   return 0b00010000;
 }
 
+void setSegment(uint8_t digits[], uint8_t digit, uint8_t segment) {
+  digits[digit] |= 1 << segment;
+}
+
 void displayText(String text) {
-  ledMatrix.clear();
+  uint8_t digits[4];
   int digit = 0;
   for (int p = 0; p < (int)text.length() && digit < 4 + 1; p++) {
     char ch = text[p];
     if (digit > 0 && ch == '.') {
       byte prevDigitIndex = kDigitsWiring[digit - 1];
       byte dotIndex = kSegmentsWiring[0];
-      ledMatrix.setPixel(prevDigitIndex, dotIndex);
+      setSegment(digits, prevDigitIndex, dotIndex);
     } else if (digit < 4) {
       byte digitIndex = kDigitsWiring[digit];
       byte glyph = getSegmentsOfChar(ch);
       for (int ns = 0; ns < 8; ns++) {
         if ((glyph & (1 << ns)) != 0) {
           byte segmentIndex = kSegmentsWiring[ns];
-          ledMatrix.setPixel(digitIndex, segmentIndex);
+          setSegment(digits, digitIndex, segmentIndex);
         }
       }
       digit++;
     }
   }
-  ledMatrix.commit();
-  ledMatrix.setIntensity(15);
+  display.setSegments(digits);
+  display.setBrightness(255);
   lastTextAt = millis();
 }
 
 void setupDisplay() {
-  ledMatrix.init();
-  ledMatrix.sendByte(MAX7219_REG_SCANLIMIT, kDisplayScanLimit);
+  display.begin();
 
-  ledMatrix.clear();
-  ledMatrix.commit();
-  ledMatrix.setIntensity(15);
+  display.setBrightness(255);
 
   displayText(" Hi");
 } 
