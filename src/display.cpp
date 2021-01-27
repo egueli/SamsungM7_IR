@@ -1,7 +1,12 @@
 #include <Arduino.h>
 #include "board.h"
 #include "seven_seg_display.h"
+
+#ifdef DISPLAY_MAX7219
 #include "seven_seg_max7219.h"
+#else
+#include "seven_seg_tm1637.h"
+#endif
 
 const unsigned long kTextDisplayDuration = 1500;
 
@@ -34,8 +39,13 @@ const byte kDisplayFont[kNumChars][2] = {
   { 'v', 0b00111000 },
 };
 
+#ifdef DISPLAY_MAX7219
 Max7219Display max7219Display(kMax7219LoadPin);
 SevenSegmentDisplay &display = max7219Display;
+#else
+Tm1637Display tm1637Display(kTm1637ClockPin, kTm1637DataPin);
+SevenSegmentDisplay &display = tm1637Display;
+#endif
 
 unsigned long lastTextAt;
 
