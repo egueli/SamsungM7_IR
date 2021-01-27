@@ -41,5 +41,5 @@ const byte kSegmentsWiring[] = { 7, 6, 5, 4, 3, 2, 1, 0 };
 #ifdef DISPLAY_MAX7219
 const byte kDigitsWiring[] = { 2, 6, 4, 0 };
 #else
-const byte kDigitsWiring[] = { 3, 2, 1, 0 };
+const byte kDigitsWiring[] = { 0, 1, 2, 3 };
 #endif
