@@ -66,10 +66,6 @@ byte getSegmentsOfChar(char c) {
   return 0b00010000;
 }
 
-void setSegment(uint8_t digits[], uint8_t digit, uint8_t segment) {
-  digits[digit] |= 1 << segment;
-}
-
 void displayText(String text) {
   uint8_t digits[4] = {0, 0, 0, 0};
   int digit = 0;
@@ -78,14 +74,14 @@ void displayText(String text) {
     if (digit > 0 && ch == '.') {
       byte prevDigitIndex = kDigitsWiring[digit - 1];
       byte dotIndex = kSegmentsWiring[0];
-      setSegment(digits, prevDigitIndex, dotIndex);
+      bitSet(digits[prevDigitIndex], dotIndex);
     } else if (digit < 4) {
       byte digitIndex = kDigitsWiring[digit];
       byte glyph = getSegmentsOfChar(ch);
       for (int ns = 0; ns < 8; ns++) {
         if ((glyph & (1 << ns)) != 0) {
           byte segmentIndex = kSegmentsWiring[ns];
-          setSegment(digits, digitIndex, segmentIndex);
+          bitSet(digits[digitIndex], segmentIndex);
         }
       }
       digit++;
