@@ -71,7 +71,7 @@ void setSegment(uint8_t digits[], uint8_t digit, uint8_t segment) {
 }
 
 void displayText(String text) {
-  uint8_t digits[4];
+  uint8_t digits[4] = {0, 0, 0, 0};
   int digit = 0;
   for (int p = 0; p < (int)text.length() && digit < 4 + 1; p++) {
     char ch = text[p];
