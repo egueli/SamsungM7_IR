@@ -66,14 +66,17 @@ There are two options: one using an all-in-one display module based on TM1637 li
 
 #### TM1637 all-in-one
 
+The microcontroller can be directly connected to this module. Super easy.
+
 ![TM1637-based display controller](hardware/display_tm1637.png)
 
 #### MAX7219 DIY
 
-![MAX7219-based display controller](hardware/display_max7219.png)
 Connect each `DIGx` wire of J1 to the cathode of each digit, and each `SEGx` of J2 to the same segment in all digits. The wiring is pretty much arbitrary (fit for an old display PCB I made years ago and wanted to reuse), it can be changed at your convenience, with corresponding changes to `board.h`.
 
 You'll need three more level shifters like the one for the IR; the Adafruit module provides four.
+
+![MAX7219-based display controller](hardware/display_max7219.png)
 
 ## Firmware
 
