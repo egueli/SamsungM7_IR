@@ -39,32 +39,56 @@ The speaker may accept multiple inputs (Bluetooth, tuner, phono etc.), and it ma
 
 Samsung Multiroom devices may go on standby after 8 hours, and won't play any audio after that. To leave standby, just press any of the buttons above.
 
-## How to set up
+## Hardware
 
-### Hardware
-
-You'll need the following:
+At the very essential you'll need the following:
 * Wemos D1 Mini or an equivalent ESP8266-based board;
-* A TSOP1738 IR receiver
-* A level shifter like [Adafruit](https://www.adafruit.com/product/757)'s (because the TSOP works at 5V but the ESP officially doesn't)
-* (optional) A MAX7219 and 4-digit seven-segment display
-* A few passive components, see schematic:
+* A TSOP1738 IR receiver, plus:
+    * A 100Ω resistor
+    * A 4.7uF electrolytic capacitor
+* A level shifter:
+    * As an integrated module like [Adafruit's](https://www.adafruit.com/product/757)
+    * As individual components:
+        * 1x BSS138
+        * 2x 10kΩ resistors
 
-![Schematic](hardware/board.png)
+Schematic:
+![Microcontroller](hardware/micro.png)
+![IR receiver](hardware/ir.png)
 
-Also check out the `schematic` folder for the EAGLE schematic. I'm not providing a `.brd` file as I only made it for a perfboard and you might want/need a different technology.
+This is the bare minimum to get you up and running. It will receive IR signals from the remote and forward to the amplifier.
 
-### Building
+### Display
 
-The firmware is based on PlatformIO. A little configuration (see below) and a `pio run -t upload` should be enough to download the required libraries and build the firmware.
+Then, you can add a four-digits LED seven-segment display. It will show the device status and the volume as you press the buttons.
 
-### Configuration
+There are two options: one using an all-in-one display module based on TM1637 like [this one from Robotdyn](https://robotdyn.com/4-digit-led-display-tube-7-segments-tm1637-50x19mm.html) and one using a MAX7219 and four common-cathode 7-segment displays.
+
+#### TM1637 all-in-one
+
+The microcontroller can be directly connected to this module. Super easy.
+
+![TM1637-based display controller](hardware/display_tm1637.png)
+
+#### MAX7219 DIY
+
+Connect each `DIGx` wire of J1 to the cathode of each digit, and each `SEGx` of J2 to the same segment in all digits. The wiring is pretty much arbitrary (fit for an old display PCB I made years ago and wanted to reuse), it can be changed at your convenience, with corresponding changes to `board.h`.
+
+You'll need three more level shifters like the one for the IR; the Adafruit module provides four.
+
+![MAX7219-based display controller](hardware/display_max7219.png)
+
+## Firmware
+
+The firmware is based on [PlatformIO](https://platformio.org). A little configuration (see below) and a `pio run -t upload` should be enough to download the required libraries and build the firmware.
+
+## Configuration
 
 Create a file `src/wifi_credentials.h` to enter your Wi-Fi crendentials. See details in `src/wifi.cpp`.
 
 In `config.h` file you can configure the IR commands and speaker protocol to use.
 
-### IR codes
+## IR codes
 
 The firmware is compatible with my LG smart TV remote control. The following buttons are recognized:
 
@@ -74,9 +98,3 @@ The firmware is compatible with my LG smart TV remote control. The following but
 * TV/Radio
 
 To use a different remote control, open the serial monitor and look at the IR codes that are sent when you press the desired buttons. Then change the constants in `config.h` accordingly.
-
-### Display
-
-This firmware can also provide user feedback via four 7-segment displays, controlled by a MAX7219, if provided (i.e. the firmware should just work even if there is no display).
-
-The displays have common cathode; the anodes should be connected to JP2 and the cathodes to JP1. Since I was using an old board I made for the displays, the pin mapping between the MAX7219 and the displays looks somewhat scrambled in the schematic. Feel free to edit it for your setup.
