@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "board.h"
+#include "config.h"
 #include "seven_seg_display.h"
 
 #ifdef DISPLAY_MAX7219
@@ -88,14 +89,14 @@ void displayText(String text) {
     }
   }
   display.setSegments(digits);
-  display.setBrightness(255);
+  display.setBrightness(kDisplayBrightness);
   lastTextAt = millis();
 }
 
 void setupDisplay() {
   display.begin();
 
-  display.setBrightness(255);
+  display.setBrightness(kDisplayBrightness);
 
   displayText(" Hi");
 } 

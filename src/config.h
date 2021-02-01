@@ -9,6 +9,14 @@
 
 #include <stdint.h>
 
+/** 
+ * The display brightness. Maximum intensity is 255.
+ * The precision depends on the display driver: for example, TM1637 has
+ * three bits of precision so the lowest number higher than 0 is
+ * (1 << (8 - 3)) = 32.
+ */
+const uint8_t kDisplayBrightness = 64;
+
 /*
 Uncomment this to use the Samsung Multiroom (legacy) instead of
 Yamaha MusicCast protocol.
