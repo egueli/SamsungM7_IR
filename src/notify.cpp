@@ -55,26 +55,20 @@ void notifyVolume(int volume, bool wasSet) {
   displayText(text);
 }
 
-void notifyFail(char code, bool duringSet) {
+void notifyFail(char code) {
   String text = "  E";
   text += code;
-  if (duringSet) {
-    text += ".";
-  }
   displayText(text);
 }
 
 void notifyVolumeGetSuccess(int volume) {
   notifyVolume(volume, false);
 }
-void notifyVolumeGetFail() {
-  notifyFail(kDisplayErrorCodeVolume, false);
-}
 void notifyVolumeSetSuccess(int volume) {
   notifyVolume(volume, true);
 }
-void notifyVolumeSetFail() {
-  notifyFail(kDisplayErrorCodeVolume, true);
+void notifyVolumeFail() {
+  notifyFail(kDisplayErrorCodeVolume);
 }
 
 
@@ -83,31 +77,25 @@ void notifyTv(bool wasSet) {
 }
 
 void notifyTvFail() {
-  notifyAuxSetFail();
+  notifyAuxFail();
 }
 
 void notifyAuxGetSuccess(bool isAux) {
   notifyTv(false);
 }
-void notifyAuxGetFail() {
-  notifyFail(kDisplayErrorCodeAux, false);
-}
 void notifyAuxSetSuccess(bool isAux) {
   notifyTv(true);
 }
-void notifyAuxSetFail() {
-  notifyFail(kDisplayErrorCodeAux, true);
+void notifyAuxFail() {
+  notifyFail(kDisplayErrorCodeAux);
 }
 
 void notifyMuteGetSuccess() {
   displayText("mu?");
 }
-void notifyMuteGetFail() {
-  notifyFail(kDisplayErrorCodeMute, false);
-}
 void notifyMuteSetSuccess(bool isMute) {
   displayText(isMute ? "mute." : "soun.");
 }
-void notifyMuteSetFail() {
-  notifyFail(kDisplayErrorCodeMute, true);
+void notifyMuteFail() {
+  notifyFail(kDisplayErrorCodeMute);
 }

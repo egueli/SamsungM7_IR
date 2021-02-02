@@ -6,19 +6,16 @@ void notifyNoSpeaker();
 void notifySpeakerAddress(String address);
 
 void notifyVolumeGetSuccess(int volume);
-void notifyVolumeGetFail();
 void notifyVolumeSetSuccess(int volume);
-void notifyVolumeSetFail();
+void notifyVolumeFail();
 
 void notifyAuxGetSuccess(bool isAux);
-void notifyAuxGetFail();
 void notifyAuxSetSuccess(bool isAux);
-void notifyAuxSetFail();
+void notifyAuxFail();
 
 void notifyTv(bool wasSet);
 void notifyTvFail();
 
 void notifyMuteGetSuccess();
-void notifyMuteGetFail();
 void notifyMuteSetSuccess(bool isMuted);
-void notifyMuteSetFail();
+void notifyMuteFail();

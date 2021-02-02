@@ -124,7 +124,7 @@ bool SamsungMultiroomSpeaker::setTvInput() {
     bool success = isInputSourceAux(isAux);
     if (!success) {
       USE_SERIAL.println("unable to get input source");
-      notifyAuxGetFail();
+      notifyAuxFail();
       return false;
     }
   }
@@ -150,7 +150,7 @@ bool SamsungMultiroomSpeaker::setTvInput() {
   if (success) {
     notifyAuxSetSuccess(isAux);
   } else {
-    notifyAuxSetFail();
+    notifyAuxFail();
   }
   return success;
 }

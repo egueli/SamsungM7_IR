@@ -10,7 +10,7 @@ bool setVolumeDelta(Speaker& speaker, int delta) {
   bool success;
   success = speaker.getVolume(volume);
   if (!success) {
-    notifyVolumeGetFail();
+    notifyVolumeFail();
     return false;
   }
   notifyVolumeGetSuccess(volume);
@@ -32,7 +32,7 @@ bool setVolumeDelta(Speaker& speaker, int delta) {
   if (success) {
     notifyVolumeSetSuccess(newVolume);
   } else {
-    notifyVolumeSetFail();
+    notifyVolumeFail();
   }
   return success;
 }
@@ -56,7 +56,7 @@ bool toggleMute(Speaker &speaker) {
   bool getSuccess = speaker.getMuteStatus(isMuted);
   if (!getSuccess) {
     USE_SERIAL.println("unable to get mute state");
-    notifyMuteGetFail();
+    notifyMuteFail();
     return false;
   }
   notifyMuteGetSuccess();
@@ -66,7 +66,7 @@ bool toggleMute(Speaker &speaker) {
   bool setSuccess = speaker.setMuteStatus(!isMuted);
   if (!setSuccess) {
     USE_SERIAL.println("fail :(");
-    notifyMuteSetFail();
+    notifyMuteFail();
     return false;
   }
 
