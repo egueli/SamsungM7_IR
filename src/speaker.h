@@ -26,10 +26,10 @@ struct Speaker {
     /** 
      * Queries the speaker for the current volume level.
      * This function will make an HTTP request and will call onHttpWait() while waiting for the response.
-     * \return the volume level as a non-negative number, or kGetVolumeError if an error occurred.
-     * The magnitude is device-specific
+     * \param outVolume the current speaker volume. The magnitude is device-specific.
+     * \return true if the read was successful, false otherwise.
      */
-    virtual int getVolume() = 0;
+    virtual bool getVolume(int &outVolume) = 0;
 
     /**
      * Sets the speaker volume.

@@ -12,7 +12,7 @@ public:
     void setAddress(const String &address);
     bool isAddressValid();
 
-    int getVolume();
+    bool getVolume(int &outVolume);
     bool setVolume(int newVolume);
 
     bool setTvInput();

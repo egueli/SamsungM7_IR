@@ -20,14 +20,15 @@ bool MusicCastSpeaker::isAddressValid()
     return waitForHttpOkResponse(request);
 }
 
-int MusicCastSpeaker::getVolume()
+bool MusicCastSpeaker::getVolume(int &outVolume)
 {
     DynamicJsonDocument doc(384);
     if (!getStatus(doc)) {
-        return kGetVolumeError;
+        return false;
     }
 
-    return doc["volume"];
+    outVolume = doc["volume"];
+    return true;
 }
 
 

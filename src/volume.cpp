@@ -6,8 +6,10 @@
 
 bool setVolumeDelta(Speaker& speaker, int delta) {
   USE_SERIAL.print("... ");
-  int volume = speaker.getVolume();
-  if (volume == Speaker::kGetVolumeError) {
+  int volume;
+  bool success;
+  success = speaker.getVolume(volume);
+  if (!success) {
     notifyVolumeGetFail();
     return false;
   }
@@ -19,7 +21,6 @@ bool setVolumeDelta(Speaker& speaker, int delta) {
   USE_SERIAL.print(" => ");
   USE_SERIAL.print(newVolume);
   USE_SERIAL.print(" ");
-  bool success;
   if (newVolume == volume) {
     // skip an HTTP request just to set the same volume
     USE_SERIAL.print("(skip) ");

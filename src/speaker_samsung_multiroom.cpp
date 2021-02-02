@@ -60,16 +60,16 @@ int SamsungMultiroomSpeaker::getVolumeFromHttp() {
   return valueString.toInt();
 }
 
-int SamsungMultiroomSpeaker::getVolume() {
+bool SamsungMultiroomSpeaker::getVolume(int &outVolume) {
   String url;
   if (!getQueryUrl(url, "GetVolume")) {
-    return kGetVolumeError;
+    return false;
   }
 
   request.open("GET", url.c_str());
   request.send();
-  int volume = getVolumeFromHttp();
-  return volume;
+  outVolume = getVolumeFromHttp();
+  return true;
 }
 
 bool SamsungMultiroomSpeaker::checkSuccess() {
