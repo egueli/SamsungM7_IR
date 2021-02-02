@@ -56,7 +56,6 @@ bool MusicCastSpeaker::setTvInput()
     notifyTv(false);
     bool success = powerOn();
     if (!success) {
-        notifyTvFail();
         return false;        
     }
 
@@ -71,7 +70,6 @@ bool MusicCastSpeaker::setTvInput()
     request.send();
     if (!checkSuccess()) 
     {
-        notifyTvFail();
         return false;
     }
 
@@ -80,10 +78,6 @@ bool MusicCastSpeaker::setTvInput()
     if (success)
     {
         notifyTv(true);
-    }
-    else
-    {
-        notifyTvFail();
     }
     return success;
 }

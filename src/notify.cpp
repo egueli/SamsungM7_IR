@@ -76,10 +76,6 @@ void notifyTv(bool wasSet) {
   displayText(wasSet ? " tv." : " tv");
 }
 
-void notifyTvFail() {
-  notifyAuxFail();
-}
-
 void notifyAuxGetSuccess(bool isAux) {
   notifyTv(false);
 }
@@ -88,6 +84,9 @@ void notifyAuxSetSuccess(bool isAux) {
 }
 void notifyAuxFail() {
   notifyFail(kDisplayErrorCodeAux);
+}
+void notifyTvFail() {
+  notifyAuxFail();
 }
 
 void notifyMuteGetSuccess() {
