@@ -9,7 +9,7 @@ void MusicCastSpeaker::setAddress(const String &address)
 bool MusicCastSpeaker::isAddressValid()
 {
     String url;
-    if (!getZoneUrl(url, "getStatus"))
+    if (getZoneUrl(url, "getStatus") != Result::OK)
     {
         return false;
     }
@@ -17,28 +17,22 @@ bool MusicCastSpeaker::isAddressValid()
     request.open("GET", url.c_str());
     request.send();
 
-    return waitForHttpOkResponse(request);
+    return waitForHttpOkResponse(request) == Result::OK;
 }
 
-bool MusicCastSpeaker::getVolume(int &outVolume)
+Result MusicCastSpeaker::getVolume(int &outVolume)
 {
     DynamicJsonDocument doc(384);
-    if (!getStatus(doc)) {
-        return false;
-    }
+    RETURN_IF_ERROR(getStatus(doc))
 
     outVolume = doc["volume"];
-    return true;
+    return Result::OK;
 }
 
-
-bool MusicCastSpeaker::setVolume(int newVolume)
+Result MusicCastSpeaker::setVolume(int newVolume)
 {
     String url;
-    if (!getZoneUrl(url, "setVolume?volume=" + String(newVolume)))
-    {
-        return false;
-    }
+    RETURN_IF_ERROR(getZoneUrl(url, "setVolume?volume=" + String(newVolume)))
 
     request.open("GET", url.c_str());
     request.send();
@@ -50,66 +44,53 @@ bool MusicCastSpeaker::setVolume(int newVolume)
  * this also configures the A/B speakers so to use the speakers near to the TV.
  * It also turns the power on from standby.
  */
-bool MusicCastSpeaker::setTvInput()
+Result MusicCastSpeaker::setTvInput()
 {
     Serial.print("Powering on (if on standby)... ");
     notifyTv(false);
-    bool success = powerOn();
-    if (!success) {
-        return false;        
-    }
+    RETURN_IF_ERROR(powerOn())
 
     String url;
-    if (!getZoneUrl(url, "setInput?input=optical1"))
-    {
-        return false;
-    }
+    RETURN_IF_ERROR(getZoneUrl(url, "setInput?input=optical1"))
 
     Serial.print("OK. Setting input to Optical1... ");
     request.open("GET", url.c_str());
     request.send();
-    if (!checkSuccess()) 
-    {
-        return false;
-    }
+    RETURN_IF_ERROR(checkSuccess()) 
 
     Serial.println("OK. Setting speakers A/B... ");
-    success = setABSpeakers();
-    if (success)
+    Result result = setABSpeakers();
+    if (result == Result::OK)
     {
         notifyTv(true);
     }
-    return success;
+    return result;
 }
 
-bool MusicCastSpeaker::powerOn()
+Result MusicCastSpeaker::powerOn()
 {
     String url;
-    if (!getZoneUrl(url, "setPower?power=on"))
-    {
-        return false;
-    }
+    RETURN_IF_ERROR(getZoneUrl(url, "setPower?power=on"))
     request.open("GET", url.c_str());
     request.send();
 
     return checkSuccess();
 }
 
-bool MusicCastSpeaker::setABSpeakers() 
+Result MusicCastSpeaker::setABSpeakers() 
 {
-    return setABSpeaker('A', false) && setABSpeaker('B', true);
+    RETURN_IF_ERROR(setABSpeaker('A', false))
+    RETURN_IF_ERROR(setABSpeaker('B', true))
+    return Result::OK;
 }
 
-bool MusicCastSpeaker::setABSpeaker(const char &letter, const bool enable) {
+Result MusicCastSpeaker::setABSpeaker(const char &letter, const bool enable) {
     String command = "setSpeaker";
     command += letter;
     command += "?enable=";
     command += enable ? "true" : "false";
     String url;
-    if (!getSystemUrl(url, command))
-    {
-        return false;
-    }
+    RETURN_IF_ERROR(getSystemUrl(url, command))
 
     Serial.println(url);
     request.open("GET", url.c_str());
@@ -117,24 +98,19 @@ bool MusicCastSpeaker::setABSpeaker(const char &letter, const bool enable) {
     return checkSuccess();
 }
 
-bool MusicCastSpeaker::getMuteStatus(bool &outStatus)
+Result MusicCastSpeaker::getMuteStatus(bool &outStatus)
 {
     DynamicJsonDocument doc(384);
-    if (!getStatus(doc)) {
-        return false;
-    }
+    RETURN_IF_ERROR(getStatus(doc))
 
     outStatus = doc["mute"];
-    return true;
+    return Result::OK;
 }
 
-bool MusicCastSpeaker::setMuteStatus(const bool newMuteStatus)
+Result MusicCastSpeaker::setMuteStatus(const bool newMuteStatus)
 {
     String url;
-    if (!getZoneUrl(url, newMuteStatus ? "setMute?enable=true" : "setMute?enable=false"))
-    {
-        return false;
-    }
+    RETURN_IF_ERROR(getZoneUrl(url, newMuteStatus ? "setMute?enable=true" : "setMute?enable=false"))
 
     request.open("GET", url.c_str());
     request.send();
@@ -145,38 +121,35 @@ bool MusicCastSpeaker::setMuteStatus(const bool newMuteStatus)
  * Puts the base URL to send zone-based requests to the speaker
  * \return true if the IP address is known and a URL can be constructed, false otherwise.
  */
-bool MusicCastSpeaker::getZoneUrl(String &output, const String &endPart)
+Result MusicCastSpeaker::getZoneUrl(String &output, const String &endPart)
 {
     if (ipAddress.isEmpty())
     {
-        return false;
+        return Result::ERROR_NO_SPEAKER_ADDRESS;
     }
 
     output = "http://" + ipAddress + "/YamahaExtendedControl/v1/main/" + endPart;
-    return true;
+    return Result::OK;
 }
 
 /**
  * Puts the base URL to send system-based requests to the speaker
  * \return true if the IP address is known and a URL can be constructed, false otherwise.
  */
-bool MusicCastSpeaker::getSystemUrl(String &output, const String &endPart)
+Result MusicCastSpeaker::getSystemUrl(String &output, const String &endPart)
 {
     if (ipAddress.isEmpty())
     {
-        return false;
+        return Result::ERROR_NO_SPEAKER_ADDRESS;
     }
 
     output = "http://" + ipAddress + "/YamahaExtendedControl/v1/system/" + endPart;
-    return true;
+    return Result::OK;
 }
 
-bool MusicCastSpeaker::checkSuccess()
+Result MusicCastSpeaker::checkSuccess()
 {
-    if (!waitForHttpOkResponse(request))
-    {
-        return false;
-    }
+    RETURN_IF_ERROR(waitForHttpOkResponse(request))
 
     String body = request.responseText();
     DynamicJsonDocument doc(384);
@@ -184,42 +157,36 @@ bool MusicCastSpeaker::checkSuccess()
     if (jsonError)
     {
         Serial.printf("Response JSON deserialization error: %s\n", jsonError.c_str());
-        return false;
+        return Result::ERROR_PARSE_FAILED;
     }
 
     int responseCode = doc["response_code"];
     if (responseCode != 0)
     {
         Serial.printf("non-zero YXC response code %d\n", responseCode);
-        return false;
+        return Result::ERROR_PARSE_FAILED;
     }
 
-    return true;
+    return Result::OK;
 }
 
-bool MusicCastSpeaker::getStatus(DynamicJsonDocument &outputDoc)
+Result MusicCastSpeaker::getStatus(DynamicJsonDocument &outputDoc)
 {
     String url;
-    if (!getZoneUrl(url, "getStatus"))
-    {
-        return false;
-    }
+    RETURN_IF_ERROR(getZoneUrl(url, "getStatus"))
 
     request.open("GET", url.c_str());
     request.send();
 
-    if (!waitForHttpOkResponse(request))
-    {
-        return false;
-    }
+    RETURN_IF_ERROR(waitForHttpOkResponse(request))
 
     String body = request.responseText();
     DeserializationError jsonError = deserializeJson(outputDoc, body);
     if (jsonError)
     {
         Serial.printf("JSON deserialization error: %s\n", jsonError.c_str());
-        return false;
+        return Result::ERROR_PARSE_FAILED;
     }
 
-    return true;
+    return Result::OK;
 }

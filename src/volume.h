@@ -2,6 +2,6 @@
 
 #include "speaker.h"
 
-bool increaseVolume(Speaker& speaker);
-bool decreaseVolume(Speaker& speaker); 
-bool toggleMute(Speaker &speaker);
+Result increaseVolume(Speaker& speaker);
+Result decreaseVolume(Speaker& speaker); 
+Result toggleMute(Speaker &speaker);

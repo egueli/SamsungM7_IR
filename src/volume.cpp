@@ -4,14 +4,10 @@
 #include "serial.h"
 #include "config.h"
 
-bool setVolumeDelta(Speaker& speaker, int delta) {
+Result setVolumeDelta(Speaker& speaker, int delta) {
   USE_SERIAL.print("... ");
   int volume;
-  bool success;
-  success = speaker.getVolume(volume);
-  if (!success) {
-    return false;
-  }
+  RETURN_IF_ERROR(speaker.getVolume(volume))
   notifyVolumeGetSuccess(volume);
   int newVolume = volume + delta;
   // prevent going out of bounds
@@ -23,51 +19,38 @@ bool setVolumeDelta(Speaker& speaker, int delta) {
   if (newVolume == volume) {
     // skip an HTTP request just to set the same volume
     USE_SERIAL.print("(skip) ");
-    success = true;
   } else {
     USE_SERIAL.print(" ... ");
-    success = speaker.setVolume(newVolume);
+    RETURN_IF_ERROR(speaker.setVolume(newVolume))
   }
-  if (success) {
-    notifyVolumeSetSuccess(newVolume);
-  }
-  return success;
+  notifyVolumeSetSuccess(newVolume);
+  return Result::OK;
 }
 
-bool increaseVolume(Speaker& speaker) {
+Result increaseVolume(Speaker& speaker) {
   USE_SERIAL.print("VOL+ ");
-  bool success = setVolumeDelta(speaker, kVolumeUpStep);
-  USE_SERIAL.println(success ? "OK" : "fail :(");
-  return success;
+  RETURN_IF_ERROR(setVolumeDelta(speaker, kVolumeUpStep))
+  return Result::OK;
 }
 
-bool decreaseVolume(Speaker& speaker) {
+Result decreaseVolume(Speaker& speaker) {
   USE_SERIAL.print("VOL- ");
-  bool success = setVolumeDelta(speaker, kVolumeDownStep);
-  USE_SERIAL.println(success ? "OK" : "fail :(");
-  return success;
+  RETURN_IF_ERROR(setVolumeDelta(speaker, kVolumeDownStep))
+  return Result::OK;
 }
 
 
-bool toggleMute(Speaker &speaker) {
+Result toggleMute(Speaker &speaker) {
   bool isMuted;
   USE_SERIAL.print("Mute: ");
-  bool getSuccess = speaker.getMuteStatus(isMuted);
-  if (!getSuccess) {
-    USE_SERIAL.println("unable to get mute state");
-    return false;
-  }
+  RETURN_IF_ERROR(speaker.getMuteStatus(isMuted))
   notifyMuteGetSuccess();
   USE_SERIAL.print(isMuted ? "on" : "off");
   USE_SERIAL.print(" => ");
 
-  bool setSuccess = speaker.setMuteStatus(!isMuted);
-  if (!setSuccess) {
-    USE_SERIAL.println("fail :(");
-    return false;
-  }
+  RETURN_IF_ERROR(speaker.setMuteStatus(!isMuted))
 
   USE_SERIAL.println(!isMuted ? "on" : "off");
   notifyMuteSetSuccess(!isMuted);
-  return true;
+  return Result::OK;
 }

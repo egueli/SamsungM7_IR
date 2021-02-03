@@ -12,23 +12,23 @@ public:
     void setAddress(const String &address);
     bool isAddressValid();
 
-    bool getVolume(int &outVolume);
-    bool setVolume(int newVolume);
+    Result getVolume(int &outVolume);
+    Result setVolume(int newVolume);
 
-    bool setTvInput();
+    Result setTvInput();
 
-    bool getMuteStatus(bool &outStatus);
-    bool setMuteStatus(const bool newMuteStatus);
+    Result getMuteStatus(bool &outStatus);
+    Result setMuteStatus(const bool newMuteStatus);
 
 private:
     String ipAddress;
     asyncHTTPrequest request;
-    bool getZoneUrl(String &output, const String &endPart);
-    bool getSystemUrl(String &output, const String &endPart);
-    bool checkSuccess();
-    bool getStatus(DynamicJsonDocument &outputDoc);
-    bool powerOn();
-    bool setABSpeakers();
-    bool setABSpeaker(const char &letter, const bool enable);
+    Result getZoneUrl(String &output, const String &endPart);
+    Result getSystemUrl(String &output, const String &endPart);
+    Result checkSuccess();
+    Result getStatus(DynamicJsonDocument &outputDoc);
+    Result powerOn();
+    Result setABSpeakers();
+    Result setABSpeaker(const char &letter, const bool enable);
 };
 

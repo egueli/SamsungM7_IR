@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include "notify.h"
+#include "error.h"
 
 /**
  * Controls an IP-accessible audio speaker.
@@ -19,48 +20,43 @@ struct Speaker {
      */
     virtual bool isAddressValid() = 0;
 
-    /**
-     * Special value returned by getVolume() when a connection error occurred.
-     */
-    static const int kGetVolumeError = -1;
-
     /** 
      * Queries the speaker for the current volume level.
      * This function will make an HTTP request and will call onHttpWait() while waiting for the response.
      * \param outVolume the current speaker volume. The magnitude is device-specific.
-     * \return true if the read was successful, false otherwise.
+     * \return the result of the query
      */
-    virtual bool getVolume(int &outVolume) = 0;
+    virtual Result getVolume(int &outVolume) = 0;
 
     /**
      * Sets the speaker volume.
      * This function will make an HTTP request and will call onHttpWait() while waiting for the response.
      * \param newVolume the desired volume as a non-negative number. The bounds are device-specific, and no checks are made.
-     * \return true if the set was successful, false otherwise.
+     * \return the result of the operation
      */
-    virtual bool setVolume(int newVolume) = 0;
+    virtual Result setVolume(int newVolume) = 0;
 
     /**
      * Sets the speaker's audio input to the TV corresponding to the IR remote being used.
      * Will call notify* functions to indicate the progress.
      * This function will make an HTTP request and will call onHttpWait() while waiting for the response.
-     * \return true if the set was successful, false otherwise.
+     * \return the result of the operation
      */
-    virtual bool setTvInput() = 0;
+    virtual Result setTvInput() = 0;
 
     /**
      * Queries the speaker for the current mute status.
      * This function will make an HTTP request and will call onHttpWait() while waiting for the response.
      * \param outStatus the variable that will contain the mute status. True means that the spaker is muted.
-     * \return true if the query was successful, false otherwise.
+     * \return the result of the query
      */
-    virtual bool getMuteStatus(bool &outStatus) = 0;
+    virtual Result getMuteStatus(bool &outStatus) = 0;
 
     /**
      * Sets the speaker mute status.
      * This function will make an HTTP request and will call onHttpWait() while waiting for the response.
      * \param newMuteStatus the desired mute status. True means that the speaker is muted.
-     * \return true if the set was successful, false otherwise.
+     * \return the result of the operation
      */
-    virtual bool setMuteStatus(const bool newMuteStatus) = 0;
+    virtual Result setMuteStatus(const bool newMuteStatus) = 0;
 };
