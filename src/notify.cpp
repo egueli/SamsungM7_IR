@@ -3,10 +3,6 @@
 #include "display.h"
 #include "config.h"
 
-const char kDisplayErrorCodeVolume = 'v';
-const char kDisplayErrorCodeAux = 't';
-const char kDisplayErrorCodeMute = 'n';
-
 void animate(char ch) {
   String text = "    ";
   int dashPos = (millis() / 600) % 4;
@@ -55,10 +51,26 @@ void notifyVolume(int volume, bool wasSet) {
   displayText(text);
 }
 
-void notifyFail(char code) {
-  String text = "  E";
-  text += code;
-  displayText(text);
+void notifyFail(Result result) {
+  switch(result) {
+  case Result::OK:
+    displayText("  OH"); // error: no error?
+    break;
+  case Result::ERROR_NO_SPEAKER_ADDRESS:
+    displayText("  EA");
+    break;
+  case Result::ERROR_HTTP_TIMEOUT:
+    displayText("  Et");
+    break;
+  case Result::ERROR_HTTP_NON_OK_RESPONSE:
+    displayText("  Eh");
+    break;
+  case Result::ERROR_PARSE_FAILED:
+    displayText("  EP");
+    break;
+  default:
+    displayText("  E_");
+  }
 }
 
 void notifyVolumeGetSuccess(int volume) {
@@ -66,9 +78,6 @@ void notifyVolumeGetSuccess(int volume) {
 }
 void notifyVolumeSetSuccess(int volume) {
   notifyVolume(volume, true);
-}
-void notifyVolumeFail() {
-  notifyFail(kDisplayErrorCodeVolume);
 }
 
 
@@ -82,19 +91,10 @@ void notifyAuxGetSuccess(bool isAux) {
 void notifyAuxSetSuccess(bool isAux) {
   notifyTv(true);
 }
-void notifyAuxFail() {
-  notifyFail(kDisplayErrorCodeAux);
-}
-void notifyTvFail() {
-  notifyAuxFail();
-}
 
 void notifyMuteGetSuccess() {
-  displayText("mu?");
+  displayText("mu");
 }
 void notifyMuteSetSuccess(bool isMute) {
   displayText(isMute ? "mute." : "soun.");
-}
-void notifyMuteFail() {
-  notifyFail(kDisplayErrorCodeMute);
 }

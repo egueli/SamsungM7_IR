@@ -11,7 +11,7 @@
 
 const unsigned long kTextDisplayDuration = 1500;
 
-const byte kNumChars = 24;
+const byte kNumChars = 28;
 const byte kDisplayFont[kNumChars][2] = {
   // ch    ABCDEFGd
   { ' ', 0b00000000 },
@@ -26,14 +26,18 @@ const byte kDisplayFont[kNumChars][2] = {
   { '7', 0b11100000 },
   { '8', 0b11111110 },
   { '9', 0b11110110 },
+  { 'A', 0b11101110 },
   { 'E', 0b10011110 },
   { 'H', 0b01101110 },
+  { 'h', 0b00101110 },
+  { 'O', 0b11111100 },
   { 'S', 0b10110110 },
   { 'e', 0b10011110 },
   { 'i', 0b00001000 },
   { 'm', 0b00101010 },
   { 'n', 0b00101010 },
   { 'o', 0b00111010 },
+  { 'P', 0b11001110 },
   { 's', 0b10110110 },
   { 't', 0b00011110 },
   { 'u', 0b00111000 },

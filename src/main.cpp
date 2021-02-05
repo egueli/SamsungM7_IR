@@ -57,25 +57,29 @@ void onHttpWait() {
 }
 
 void onVolumeUp() {
-  if (increaseVolume(speaker) != Result::OK) {
-    notifyVolumeFail();
+  Result result = increaseVolume(speaker);
+  if (result != Result::OK) {
+    notifyFail(result);
   }
 }
 
 void onVolumeDown() {
-  if (decreaseVolume(speaker) != Result::OK) {
-    notifyVolumeFail();
+  Result result = decreaseVolume(speaker);
+  if (result != Result::OK) {
+    notifyFail(result);
   }
 }
 
 void onTvRad() {
-  if (speaker.setTvInput() != Result::OK) {
-    notifyTvFail();
+  Result result = speaker.setTvInput();
+  if (result != Result::OK) {
+    notifyFail(result);
   }
 }
 
 void onMute() {
-  if (toggleMute(speaker) != Result::OK) {
-    notifyMuteFail();
+  Result result = toggleMute(speaker);
+  if (result != Result::OK) {
+    notifyFail(result);
   }
 }
