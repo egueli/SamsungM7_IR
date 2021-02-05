@@ -7,22 +7,22 @@
 
 const unsigned long kHttpTimeout = 5000;
 
-bool parseValueInXML(String document, String &output, String openTag, String closeTag) {
+Result parseValueInXML(String document, String &output, String openTag, String closeTag) {
   int openIndex = document.indexOf(openTag);
   if (openIndex == -1) {
-    return false;
+    return Result::ERROR_PARSE_FAILED;
   }
 
   int closeIndex = document.indexOf(closeTag, openIndex);
   if (closeIndex == -1) {
-    return false;
+    return Result::ERROR_PARSE_FAILED;
   }
 
   output = document.substring(openIndex + openTag.length(), closeIndex);
-  return true;
+  return Result::OK;
 }
 
-bool waitForHttpOkResponse(asyncHTTPrequest &request) {
+Result waitForHttpOkResponse(asyncHTTPrequest &request) {
   unsigned long startAt = millis();
 
   while (request.readyState() != 4) {
@@ -31,7 +31,7 @@ bool waitForHttpOkResponse(asyncHTTPrequest &request) {
     if (millis() - startAt > kHttpTimeout) {
       USE_SERIAL.println("[HTTP] timeout");
       request.abort();
-      return false;
+      return Result::ERROR_HTTP_TIMEOUT;
     }
   }
   
@@ -39,23 +39,15 @@ bool waitForHttpOkResponse(asyncHTTPrequest &request) {
 
   if (httpCode != 200 /* OK */) {
     USE_SERIAL.printf("[HTTP] GET not OK, code: %d\n", httpCode);
-    return false;
+    return Result::ERROR_HTTP_NON_OK_RESPONSE;
   }
 
-  return true;
+  return Result::OK;
 }
 
-bool getValueFromHttp(asyncHTTPrequest &request, String &output, String openTag, String closeTag) {
-  if (!waitForHttpOkResponse(request)) {
-    return false;
-  }
+Result getValueFromHttp(asyncHTTPrequest &request, String &output, String openTag, String closeTag) {
+  RETURN_IF_ERROR(waitForHttpOkResponse(request))
   
   String body = request.responseText();
-  bool success = parseValueInXML(body, output, openTag, closeTag);
-  if (!success) {
-    USE_SERIAL.println("[HTTP] unable to read volume");
-    return false;
-  }
-
-  return true;
+  return parseValueInXML(body, output, openTag, closeTag);
 }

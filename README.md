@@ -98,3 +98,13 @@ The firmware is compatible with my LG smart TV remote control. The following but
 * TV/Radio
 
 To use a different remote control, open the serial monitor and look at the IR codes that are sent when you press the desired buttons. Then change the constants in `config.h` accordingly.
+
+## Errors
+
+When sening a command to the speaker, something can go wrong.
+
+The display will show `E` followed by another letter if an error occurred:
+* `EA` if the speaker hasn't yet been found in the network;
+* `Et` if the speaker didn't reply on time (HTTP request timeout);
+* `Eh` if the speaker replied with an HTTP error code;
+* `EP` if the firmware wasn't able to parse the speaker response.

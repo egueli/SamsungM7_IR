@@ -3,10 +3,6 @@
 #include "display.h"
 #include "config.h"
 
-const char kDisplayErrorCodeVolume = 'v';
-const char kDisplayErrorCodeAux = 't';
-const char kDisplayErrorCodeMute = 'n';
-
 void animate(char ch) {
   String text = "    ";
   int dashPos = (millis() / 600) % 4;
@@ -55,26 +51,33 @@ void notifyVolume(int volume, bool wasSet) {
   displayText(text);
 }
 
-void notifyFail(char code, bool duringSet) {
-  String text = "  E";
-  text += code;
-  if (duringSet) {
-    text += ".";
+void notifyFail(Result result) {
+  switch(result) {
+  case Result::OK:
+    displayText("  OH"); // error: no error?
+    break;
+  case Result::ERROR_NO_SPEAKER_ADDRESS:
+    displayText("  EA");
+    break;
+  case Result::ERROR_HTTP_TIMEOUT:
+    displayText("  Et");
+    break;
+  case Result::ERROR_HTTP_NON_OK_RESPONSE:
+    displayText("  Eh");
+    break;
+  case Result::ERROR_PARSE_FAILED:
+    displayText("  EP");
+    break;
+  default:
+    displayText("  E_");
   }
-  displayText(text);
 }
 
 void notifyVolumeGetSuccess(int volume) {
   notifyVolume(volume, false);
 }
-void notifyVolumeGetFail() {
-  notifyFail(kDisplayErrorCodeVolume, false);
-}
 void notifyVolumeSetSuccess(int volume) {
   notifyVolume(volume, true);
-}
-void notifyVolumeSetFail() {
-  notifyFail(kDisplayErrorCodeVolume, true);
 }
 
 
@@ -82,32 +85,16 @@ void notifyTv(bool wasSet) {
   displayText(wasSet ? " tv." : " tv");
 }
 
-void notifyTvFail() {
-  notifyAuxSetFail();
-}
-
 void notifyAuxGetSuccess(bool isAux) {
   notifyTv(false);
-}
-void notifyAuxGetFail() {
-  notifyFail(kDisplayErrorCodeAux, false);
 }
 void notifyAuxSetSuccess(bool isAux) {
   notifyTv(true);
 }
-void notifyAuxSetFail() {
-  notifyFail(kDisplayErrorCodeAux, true);
-}
 
 void notifyMuteGetSuccess() {
-  displayText("mu?");
-}
-void notifyMuteGetFail() {
-  notifyFail(kDisplayErrorCodeMute, false);
+  displayText("mu");
 }
 void notifyMuteSetSuccess(bool isMute) {
   displayText(isMute ? "mute." : "soun.");
-}
-void notifyMuteSetFail() {
-  notifyFail(kDisplayErrorCodeMute, true);
 }

@@ -25,19 +25,19 @@ void SamsungMultiroomSpeaker::setAddress(const String &address) {
   speakerIpAddress = address;
 }
 
-bool SamsungMultiroomSpeaker::getQueryUrl(String &output, String command) {
+Result SamsungMultiroomSpeaker::getQueryUrl(String &output, String command) {
   if (speakerIpAddress.isEmpty()) {
-    return false;
+    return Result::ERROR_HTTP_TIMEOUT;
   }
 
   output = "http://" + speakerIpAddress + ":55001/UIC?cmd=%3Cname%3E" + command + "%3C/name%3E";
   
-  return true;
+  return Result::OK;
 }
 
-bool SamsungMultiroomSpeaker::getSingleParamCommandUrl(String &output, String command, String paramType, String paramName, String paramValue) {
+Result SamsungMultiroomSpeaker::getSingleParamCommandUrl(String &output, String command, String paramType, String paramName, String paramValue) {
   if (speakerIpAddress.isEmpty()) {
-    return false;
+    return Result::ERROR_NO_SPEAKER_ADDRESS;
   }
 
   output = "http://" + speakerIpAddress + ":55001/UIC?cmd="
@@ -48,31 +48,26 @@ bool SamsungMultiroomSpeaker::getSingleParamCommandUrl(String &output, String co
     "%20name%3D%22" + paramName + "%22"
     "%20val%3D%22" + paramValue + "%22"
     "/%3E";
-  return true;
+  return Result::OK;
 }
 
-int SamsungMultiroomSpeaker::getVolumeFromHttp() {
+Result SamsungMultiroomSpeaker::getVolumeFromHttp(int &outVolume) {
   String valueString;
-  bool success = getValueFromHttp(request, valueString, kVolumeOpenTag, kVolumeCloseTag);
-  if (!success) {
-    return kGetVolumeError;
-  }
-  return valueString.toInt();
+  RETURN_IF_ERROR(getValueFromHttp(request, valueString, kVolumeOpenTag, kVolumeCloseTag))
+  outVolume = valueString.toInt();
+  return Result::OK;
 }
 
-int SamsungMultiroomSpeaker::getVolume() {
+Result SamsungMultiroomSpeaker::getVolume(int &outVolume) {
   String url;
-  if (!getQueryUrl(url, "GetVolume")) {
-    return kGetVolumeError;
-  }
+  RETURN_IF_ERROR(getQueryUrl(url, "GetVolume"))
 
   request.open("GET", url.c_str());
   request.send();
-  int volume = getVolumeFromHttp();
-  return volume;
+  return getVolumeFromHttp(outVolume);
 }
 
-bool SamsungMultiroomSpeaker::checkSuccess() {
+Result SamsungMultiroomSpeaker::checkSuccess() {
   while (request.readyState() != 4) {
     yield();
     onHttpWait();
@@ -81,17 +76,15 @@ bool SamsungMultiroomSpeaker::checkSuccess() {
   int httpCode = request.responseHTTPcode();
   if (httpCode != 200 /* OK */) {
     USE_SERIAL.printf("[HTTP] GET not OK, code: %d\n", httpCode);
-    return false;
+    return Result::ERROR_HTTP_NON_OK_RESPONSE;
   }
 
-  return true;
+  return Result::OK;
 }
 
-bool SamsungMultiroomSpeaker::setVolume(int newVolume) {
+Result SamsungMultiroomSpeaker::setVolume(int newVolume) {
   String url;
-  if (!getSingleParamCommandUrl(url, "SetVolume", "dec", "volume", String(newVolume))) {
-    return false;
-  }
+  RETURN_IF_ERROR(getSingleParamCommandUrl(url, "SetVolume", "dec", "volume", String(newVolume)))
 
   request.open("GET", url.c_str());
   request.send();
@@ -99,87 +92,61 @@ bool SamsungMultiroomSpeaker::setVolume(int newVolume) {
 }
 
 // return value is success/failure; actual output is in param reference
-bool SamsungMultiroomSpeaker::isInputSourceAux(bool &isAux) {
+Result SamsungMultiroomSpeaker::isInputSourceAux(bool &isAux) {
   String url;
-  if (!getQueryUrl(url, "GetFunc")) {
-    return false;
-  }
+  RETURN_IF_ERROR(getQueryUrl(url, "GetFunc"))
   request.open("GET", url.c_str());
   request.send();
   String inputSource;
-  bool success = getValueFromHttp(request, inputSource, kInputSourceOpenTag, kInputSourceCloseTag);
-  if (!success) {
-    return false;
-  }
+  RETURN_IF_ERROR(getValueFromHttp(request, inputSource, kInputSourceOpenTag, kInputSourceCloseTag))
   USE_SERIAL.print("[");
   USE_SERIAL.print(inputSource);
   USE_SERIAL.print("]");
   isAux = inputSource == kInputSourceAux;
-  return true;
+  return Result::OK;
 }
 
-bool SamsungMultiroomSpeaker::setTvInput() {
+Result SamsungMultiroomSpeaker::setTvInput() {
   bool isAux;
-  {
-    bool success = isInputSourceAux(isAux);
-    if (!success) {
-      USE_SERIAL.println("unable to get input source");
-      notifyAuxGetFail();
-      return false;
-    }
-  }
+  RETURN_IF_ERROR(isInputSourceAux(isAux))
   notifyAuxGetSuccess(isAux);
 
   if (isAux) {
     USE_SERIAL.println("already AUX; not setting again");
     notifyAuxSetSuccess(isAux);
-    return true;
+    return Result::OK;
   }
 
   USE_SERIAL.print("set AUX... ");
   String url;
-  if (!getSingleParamCommandUrl(url, "SetFunc", "str", "function", "aux")) {
-    return false;
-  }
+  RETURN_IF_ERROR(getSingleParamCommandUrl(url, "SetFunc", "str", "function", "aux"))
 
   request.open("GET", url.c_str());
   request.send();
-  bool success = checkSuccess();
+  RETURN_IF_ERROR(checkSuccess())
 
-  USE_SERIAL.println(success ? "OK" : "fail :(");
-  if (success) {
-    notifyAuxSetSuccess(isAux);
-  } else {
-    notifyAuxSetFail();
-  }
-  return success;
+  notifyAuxSetSuccess(isAux);
+  return Result::OK;
 }
 
-bool SamsungMultiroomSpeaker::getMuteStatus(bool &muteStatus) {
+Result SamsungMultiroomSpeaker::getMuteStatus(bool &muteStatus) {
   String url;
-  if (!getQueryUrl(url, "GetMute")) {
-    return false;
-  }
+  RETURN_IF_ERROR(getQueryUrl(url, "GetMute"))
   request.open("GET", url.c_str());
   request.send();
   String muteString;
-  bool success = getValueFromHttp(request, muteString, kMuteOpenTag, kMuteCloseTag);
-  if (!success) {
-    return false;
-  }
+  RETURN_IF_ERROR(getValueFromHttp(request, muteString, kMuteOpenTag, kMuteCloseTag))
   USE_SERIAL.print("[");
   USE_SERIAL.print(muteString);
   USE_SERIAL.print("]");
   muteStatus = muteString == kMuteOn;
-  return true;
+  return Result::OK;
 }
 
 
-bool SamsungMultiroomSpeaker::setMuteStatus(const bool muteStatus) {
+Result SamsungMultiroomSpeaker::setMuteStatus(const bool muteStatus) {
   String url;
-  if (!getSingleParamCommandUrl(url, "SetMute", "str", "mute", muteStatus ? "on" : "off")) {
-    return false;
-  }
+  RETURN_IF_ERROR(getSingleParamCommandUrl(url, "SetMute", "str", "mute", muteStatus ? "on" : "off"))
   request.open("GET", url.c_str());
   request.send();
   return checkSuccess();
@@ -187,7 +154,7 @@ bool SamsungMultiroomSpeaker::setMuteStatus(const bool muteStatus) {
 
 bool SamsungMultiroomSpeaker::isAddressValid() {
   String url;
-  if (!getQueryUrl(url, "GetVolume")) {
+  if (getQueryUrl(url, "GetVolume") != Result::OK) {
     return false;
   }
 
@@ -195,10 +162,5 @@ bool SamsungMultiroomSpeaker::isAddressValid() {
   request.send();
 
   String valueString;
-  bool success = getValueFromHttp(request, valueString, kVolumeOpenTag, kVolumeCloseTag);
-  if (!success) {
-    return false;
-  }
-
-  return true;
+  return getValueFromHttp(request, valueString, kVolumeOpenTag, kVolumeCloseTag) == Result::OK;
 }

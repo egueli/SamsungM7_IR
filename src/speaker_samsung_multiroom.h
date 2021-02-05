@@ -11,21 +11,21 @@ public:
     void setAddress(const String &address);
     bool isAddressValid();
 
-    int getVolume();
-    bool setVolume(int newVolume);
+    Result getVolume(int &outVolume);
+    Result setVolume(int newVolume);
 
-    bool setTvInput();
+    Result setTvInput();
 
-    bool getMuteStatus(bool &muteStatus);
-    bool setMuteStatus(const bool muteStatus);
+    Result getMuteStatus(bool &muteStatus);
+    Result setMuteStatus(const bool muteStatus);
 
 private:
-    bool getQueryUrl(String &output, String command);
-    bool getSingleParamCommandUrl(String &output, String command, String paramType, String paramName, String paramValue);
+    Result getQueryUrl(String &output, String command);
+    Result getSingleParamCommandUrl(String &output, String command, String paramType, String paramName, String paramValue);
 
-    int getVolumeFromHttp();
-    bool checkSuccess();
-    bool isInputSourceAux(bool &isAux);
+    Result getVolumeFromHttp(int &outVolume);
+    Result checkSuccess();
+    Result isInputSourceAux(bool &isAux);
     void checkSpeakerIpAddress();
 
     String speakerIpAddress;

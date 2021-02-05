@@ -2,7 +2,8 @@
 
 #include <Arduino.h>
 #include <asyncHTTPrequest.h>
+#include "error.h"
 
-bool waitForHttpOkResponse(asyncHTTPrequest &request);
-bool parseValueInXML(String document, String &output, String openTag, String closeTag);
-bool getValueFromHttp(asyncHTTPrequest &request, String &output, String openTag, String closeTag);
+Result waitForHttpOkResponse(asyncHTTPrequest &request);
+Result parseValueInXML(String document, String &output, String openTag, String closeTag);
+Result getValueFromHttp(asyncHTTPrequest &request, String &output, String openTag, String closeTag);
