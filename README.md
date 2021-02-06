@@ -88,6 +88,8 @@ Create a file `src/wifi_credentials.h` to enter your Wi-Fi crendentials. See det
 
 In `config.h` file you can configure the IR commands and speaker protocol to use.
 
+In `config_discovery.cpp` you can set the speaker name to connect to. See [Speaker discovery] section.
+
 ## IR codes
 
 SpeakerIR is compatible with my LG smart TV remote control. The following buttons are recognized:
