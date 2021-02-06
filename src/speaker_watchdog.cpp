@@ -9,7 +9,7 @@ void SpeakerWatchdog::loop()
 {
     checkIpAddress();
 
-    if (ipAddress.isEmpty())
+    if (isWifiConnected() && ipAddress.isEmpty())
     {
         notifyNoSpeaker();
     }
