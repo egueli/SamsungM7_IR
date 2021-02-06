@@ -5,6 +5,7 @@
  * Other configuration is in
  * - wifi_credentials.h for WiFi credentials (not checked in source code) 
  * - board.h for board-specific configuration (pins, display wiring etc.)
+ * - config_discovery.cpp for speaker mDNS name (has to be in a .cpp file, not a header)
  */
 
 #include <stdint.h>
@@ -23,19 +24,12 @@ Yamaha MusicCast protocol.
 */
 //#define SPEAKER_MULTIROOM
 
-
-
-#ifdef SPEAKER_MULTIROOM
-const int kMinVolume = 0;
-const int kMaxVolume = 30;
-const int kVolumeUpStep = 1;
-const int kVolumeDownStep = -3;
-#else
-const int kMinVolume = 1;
-const int kMaxVolume = 161;
-const int kVolumeUpStep = 2;
-const int kVolumeDownStep = -2;
-#endif
+/**
+ * Name of the MDNS service identifying a specific speaker. This must be unique in the network.
+ * A null value means that any service is OK; one of them will be picked up.
+ * The value is defined in config_discovery.cpp.
+ */
+extern const char *kSpeakerServiceName;
 
 // IR codes for the remote control being used.
 #if 1

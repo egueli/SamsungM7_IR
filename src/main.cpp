@@ -10,6 +10,7 @@
 #include "http_response.h"
 #include "display.h"
 #include "volume.h"
+#include "notify.h"
 
 #ifdef SPEAKER_MULTIROOM
 #include "speaker_samsung_multiroom.h"
@@ -34,7 +35,7 @@ void setup() {
 
   setupDisplay();
   setupWifi();
-  setupDiscovery();
+  setupDiscovery(speaker);
   setupIR();
 }
 

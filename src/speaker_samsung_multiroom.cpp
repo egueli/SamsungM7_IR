@@ -6,6 +6,7 @@
 #include "http_wait.h"
 #include "serial.h"
 #include "wifi.h"
+#include "notify.h"
 
 const String kVolumeOpenTag = "<volume>";
 const String kVolumeCloseTag = "</volume>";
@@ -20,6 +21,16 @@ const String kInputSourceAux = "aux";
 const String kMuteOpenTag = "<mute>";
 const String kMuteCloseTag = "</mute>";
 const String kMuteOn = "on";
+
+Speaker::Configuration SamsungMultiroomSpeaker::getConfiguration() {
+  return {
+    "_spotify-connect._tcp.local",
+    0,
+    30,
+    1,
+    -3
+  };
+}
 
 void SamsungMultiroomSpeaker::setAddress(const String &address) {
   speakerIpAddress = address;

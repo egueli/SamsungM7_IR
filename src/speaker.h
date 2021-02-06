@@ -1,13 +1,19 @@
 #pragma once
 
 #include <Arduino.h>
-#include "notify.h"
 #include "error.h"
 
 /**
  * Controls an IP-accessible audio speaker.
  */
 struct Speaker {
+    struct Configuration;
+
+    /**
+     * Returns a configuration that is specific to this speaker type.
+     */
+    virtual Configuration getConfiguration() = 0;
+
     /**
      * Sets the IP address for this speaker.
      */
@@ -59,4 +65,12 @@ struct Speaker {
      * \return the result of the operation
      */
     virtual Result setMuteStatus(const bool newMuteStatus) = 0;
+
+    struct Configuration {
+        const char *mdnsServiceQuestion;
+        const int minVolume;
+        const int maxVolume;
+        const int volumeUpStep;
+        const int volumeDownStep;
+    };
 };

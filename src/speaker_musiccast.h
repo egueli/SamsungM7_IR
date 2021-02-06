@@ -9,6 +9,8 @@
  */
 class MusicCastSpeaker : public Speaker {
 public:
+    Configuration getConfiguration();
+
     void setAddress(const String &address);
     bool isAddressValid();
 
