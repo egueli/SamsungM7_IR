@@ -1,6 +1,13 @@
 #include "speaker_musiccast.h"
 #include "http_response.h"
 
+Speaker::Configuration MusicCastSpeaker::getConfiguration()
+{
+    return {
+        "_spotify-connect._tcp.local"
+    };
+}
+
 void MusicCastSpeaker::setAddress(const String &address)
 {
     ipAddress = address;

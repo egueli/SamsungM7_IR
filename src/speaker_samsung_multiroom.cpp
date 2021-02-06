@@ -21,6 +21,12 @@ const String kMuteOpenTag = "<mute>";
 const String kMuteCloseTag = "</mute>";
 const String kMuteOn = "on";
 
+Speaker::Configuration SamsungMultiroomSpeaker::getConfiguration() {
+  return {
+    "_spotify-connect._tcp.local"
+  };
+}
+
 void SamsungMultiroomSpeaker::setAddress(const String &address) {
   speakerIpAddress = address;
 }

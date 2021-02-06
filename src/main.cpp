@@ -34,7 +34,7 @@ void setup() {
 
   setupDisplay();
   setupWifi();
-  setupDiscovery();
+  setupDiscovery(speaker);
   setupIR();
 }
 

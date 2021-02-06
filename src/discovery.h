@@ -1,6 +1,8 @@
 #pragma once
 
-void setupDiscovery();
+#include "speaker.h"
+
+void setupDiscovery(Speaker &speaker);
 
 void loopDiscovery();
 

@@ -12,7 +12,7 @@
 /**
  * The MDNS query to send the network to find the speaker.
  */
-const char *kServiceQuestion = kSpeakerMdnsServiceQuestion;
+const char *kServiceQuestion;
 
 const char *kServiceName = kSpeakerServiceName;
 const unsigned int kMaxMDNSPacketSize = 512;
@@ -107,8 +107,9 @@ void answerCallback(const mdns::Answer *answer)
 
 mdns::MDns my_mdns(NULL, NULL, answerCallback, buffer, kMaxMDNSPacketSize);
 
-void setupDiscovery()
+void setupDiscovery(Speaker &speaker)
 {
+    kServiceQuestion = speaker.getConfiguration().mdnsServiceQuestion;
 }
 
 void sendQuery(unsigned int type, const char *queryName)

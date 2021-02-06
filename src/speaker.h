@@ -8,6 +8,13 @@
  * Controls an IP-accessible audio speaker.
  */
 struct Speaker {
+    struct Configuration;
+
+    /**
+     * Returns a configuration that is specific to this speaker type.
+     */
+    virtual Configuration getConfiguration() = 0;
+
     /**
      * Sets the IP address for this speaker.
      */
@@ -59,4 +66,8 @@ struct Speaker {
      * \return the result of the operation
      */
     virtual Result setMuteStatus(const bool newMuteStatus) = 0;
+
+    struct Configuration {
+        const char *mdnsServiceQuestion;
+    };
 };
