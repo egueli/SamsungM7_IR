@@ -90,7 +90,7 @@ In `config.h` file you can configure the IR commands and speaker protocol to use
 
 ## IR codes
 
-The firmware is compatible with my LG smart TV remote control. The following buttons are recognized:
+SpeakerIR is compatible with my LG smart TV remote control. The following buttons are recognized:
 
 * Volume up
 * Volume down
@@ -99,9 +99,17 @@ The firmware is compatible with my LG smart TV remote control. The following but
 
 To use a different remote control, open the serial monitor and look at the IR codes that are sent when you press the desired buttons. Then change the constants in `config.h` accordingly.
 
+## Speaker discovery
+
+Your speaker and this device must be connected to the same local network.
+
+SpeakerIR will find the speaker with mDNS (Bonjour / ZeroConf) protocol. 
+
+The variable `kSpeakerServiceName` in the configuration file `config_discovery.cpp` specifies the speaker name as string. To find your speaker name, use a discovery app like [Bonjour Browser](https://www.macupdate.com/app/mac/53372/bonjour-browser) on Mac. If you only have one device, the variable can be set to `nullptr` to pick up any device.
+
 ## Errors
 
-When sening a command to the speaker, something can go wrong.
+When sending a command to the speaker, something can go wrong.
 
 The display will show `E` followed by another letter if an error occurred:
 * `EA` if the speaker hasn't yet been found in the network;

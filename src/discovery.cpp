@@ -9,31 +9,11 @@
 #include <map>
 #include <set>
 
-const char *kSpeakerMdnsServiceQuestion =
-#ifdef SPEAKER_MULTIROOM
-    "_spotify-connect._tcp.local"
-#else
-    "_http._tcp.local"
-#endif
-    ;
-
-const char *kSpeakerServiceName =
-#ifdef SPEAKER_MULTIROOM
-    nullptr
-#else
-    "Living Room"
-#endif
-    ;
-
 /**
  * The MDNS query to send the network to find the speaker.
  */
 const char *kServiceQuestion = kSpeakerMdnsServiceQuestion;
 
-/**
- * The name of the MDNS service identifying a specific speaker. This must be unique in the network.
- * A null value means that any service is OK; one of them will be picked up.
- */
 const char *kServiceName = kSpeakerServiceName;
 const unsigned int kMaxMDNSPacketSize = 512;
 byte buffer[kMaxMDNSPacketSize];

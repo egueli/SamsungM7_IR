@@ -23,6 +23,20 @@ Yamaha MusicCast protocol.
 */
 //#define SPEAKER_MULTIROOM
 
+/**
+ * The MDNS query to send the network to find the speaker,
+ * e.g. "_http._tcp.local".
+ * This depends on the protocol used.
+ * The value is defined in config_discovery.cpp.
+ */
+extern const char *kSpeakerMdnsServiceQuestion;
+
+/**
+ * Name of the MDNS service identifying a specific speaker. This must be unique in the network.
+ * A null value means that any service is OK; one of them will be picked up.
+ * The value is defined in config_discovery.cpp.
+ */
+extern const char *kSpeakerServiceName;
 
 
 #ifdef SPEAKER_MULTIROOM
