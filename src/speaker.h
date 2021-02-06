@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include "notify.h"
 #include "error.h"
 
 /**
@@ -69,5 +68,9 @@ struct Speaker {
 
     struct Configuration {
         const char *mdnsServiceQuestion;
+        const int minVolume;
+        const int maxVolume;
+        const int volumeUpStep;
+        const int volumeDownStep;
     };
 };

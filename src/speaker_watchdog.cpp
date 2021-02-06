@@ -1,5 +1,6 @@
 #include "speaker_watchdog.h"
 #include "wifi.h"
+#include "notify.h"
 
 const unsigned long kSpeakerAddressIpCheckInterval = 30000;
 const unsigned int kSpeakerAddressIpCheckRetries = 3;

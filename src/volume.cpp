@@ -1,6 +1,6 @@
 #include "volume.h"
 #include "speaker.h"
-
+#include "notify.h"
 #include "serial.h"
 #include "config.h"
 
@@ -8,10 +8,11 @@ Result setVolumeDelta(Speaker& speaker, int delta) {
   USE_SERIAL.print("... ");
   int volume;
   RETURN_IF_ERROR(speaker.getVolume(volume))
-  notifyVolumeGetSuccess(volume);
+  notifyVolumeGetSuccess(speaker, volume);
   int newVolume = volume + delta;
   // prevent going out of bounds
-  newVolume = constrain(newVolume, kMinVolume, kMaxVolume);
+  auto configuration = speaker.getConfiguration();
+  newVolume = constrain(newVolume, configuration.minVolume, configuration.maxVolume);
   USE_SERIAL.print(volume);
   USE_SERIAL.print(" => ");
   USE_SERIAL.print(newVolume);
@@ -23,19 +24,19 @@ Result setVolumeDelta(Speaker& speaker, int delta) {
     USE_SERIAL.print(" ... ");
     RETURN_IF_ERROR(speaker.setVolume(newVolume))
   }
-  notifyVolumeSetSuccess(newVolume);
+  notifyVolumeSetSuccess(speaker, newVolume);
   return Result::OK;
 }
 
 Result increaseVolume(Speaker& speaker) {
   USE_SERIAL.print("VOL+ ");
-  RETURN_IF_ERROR(setVolumeDelta(speaker, kVolumeUpStep))
+  RETURN_IF_ERROR(setVolumeDelta(speaker, speaker.getConfiguration().volumeUpStep))
   return Result::OK;
 }
 
 Result decreaseVolume(Speaker& speaker) {
   USE_SERIAL.print("VOL- ");
-  RETURN_IF_ERROR(setVolumeDelta(speaker, kVolumeDownStep))
+  RETURN_IF_ERROR(setVolumeDelta(speaker, speaker.getConfiguration().volumeDownStep))
   return Result::OK;
 }
 

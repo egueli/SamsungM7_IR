@@ -2,12 +2,13 @@
 
 #include <Arduino.h>
 #include "error.h"
+#include "speaker.h"
 
 void notifyNoSpeaker();
 void notifySpeakerAddress(String address);
 
-void notifyVolumeGetSuccess(int volume);
-void notifyVolumeSetSuccess(int volume);
+void notifyVolumeGetSuccess(Speaker &speaker, int volume);
+void notifyVolumeSetSuccess(Speaker &speaker, int volume);
 
 void notifyAuxGetSuccess(bool isAux);
 void notifyAuxSetSuccess(bool isAux);

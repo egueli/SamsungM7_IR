@@ -33,7 +33,7 @@ void notifyIR() {
   displayText(" .");
 }
 
-void notifyVolume(int volume, bool wasSet) {
+void notifyVolume(Speaker &speaker, int volume, bool wasSet) {
   char text[6]; // 4 digits + 1 decimal point + 1 set confirmation dot
   const char *setDot = wasSet ? "." : "";
 #ifdef SPEAKER_MULTIROOM
@@ -44,7 +44,7 @@ void notifyVolume(int volume, bool wasSet) {
    * every step is a 0.5dB increment. Not sure if all speakers follow the
    * same convention; the Yamaha R-N602 does.
    */
-  float decibel = ((float)volume - kMaxVolume) / 2;
+  float decibel = ((float)volume - speaker.getConfiguration().maxVolume) / 2;
   snprintf(text, 6, "% 4.1f%s", decibel, setDot);
 #endif
   Serial.printf("notifyVolume: '%s'", text);
@@ -73,11 +73,11 @@ void notifyFail(Result result) {
   }
 }
 
-void notifyVolumeGetSuccess(int volume) {
-  notifyVolume(volume, false);
+void notifyVolumeGetSuccess(Speaker &speaker, int volume) {
+  notifyVolume(speaker, volume, false);
 }
-void notifyVolumeSetSuccess(int volume) {
-  notifyVolume(volume, true);
+void notifyVolumeSetSuccess(Speaker &speaker, int volume) {
+  notifyVolume(speaker, volume, true);
 }
 
 

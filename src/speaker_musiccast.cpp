@@ -1,10 +1,15 @@
 #include "speaker_musiccast.h"
 #include "http_response.h"
+#include "notify.h"
 
 Speaker::Configuration MusicCastSpeaker::getConfiguration()
 {
     return {
-        "_spotify-connect._tcp.local"
+        "_spotify-connect._tcp.local",
+        1,
+        161,
+        2,
+        -2
     };
 }
 
