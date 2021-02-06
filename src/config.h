@@ -5,6 +5,7 @@
  * Other configuration is in
  * - wifi_credentials.h for WiFi credentials (not checked in source code) 
  * - board.h for board-specific configuration (pins, display wiring etc.)
+ * - config_discovery.cpp for speaker mDNS name (has to be in a .cpp file, not a header)
  */
 
 #include <stdint.h>
