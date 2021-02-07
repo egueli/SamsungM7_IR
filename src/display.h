@@ -6,3 +6,4 @@ void setupDisplay();
 void loopDisplay();
 
 void displayText(String text);
+void setDisplayBackground(String backgroundText);
