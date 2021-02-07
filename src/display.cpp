@@ -68,6 +68,7 @@ void setupDisplay() {
 void loopDisplay() {
   if (millis() > lastTextAt + kTextDisplayDuration) {
     display.setSegments(backgroundDigits);
+    display.setBrightness(kBackgroundDisplayBrightness);
   }
 }
 

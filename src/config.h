@@ -18,6 +18,11 @@
  */
 const uint8_t kDisplayBrightness = 64;
 
+/**
+ * The display brightness when inactive, e.g. when showing the clock.
+ */
+const uint8_t kBackgroundDisplayBrightness = 0;
+
 /*
 Uncomment this to use the Samsung Multiroom (legacy) instead of
 Yamaha MusicCast protocol.
