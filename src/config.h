@@ -53,3 +53,6 @@ const uint64_t kIrTvRadCode = 0x86C630CF;
 
 /** The time zone offset in hours. e.g. CET is 1 */
 const int kTimeZone = 1;
+
+/** Use the 12 hour (ap/pm) time format, 24h otherwise */
+const bool kTimeFormat12h = false;
