@@ -24,31 +24,31 @@ time_t getNtpTime();
 void sendNTPpacket(IPAddress &address);
 
 void setupClock() {
-    // do nothing; we must wait for WiFi and that only happens during sketch loop
+  // do nothing; we must wait for WiFi and that only happens during sketch loop
 }
 
 void loopClock() {
-    if (!isWifiConnected()) {
-        return;
-    }
+  if (!isWifiConnected()) {
+    return;
+  }
 
-    if (!clockInitialized) {
-        initializeClock();
-        clockInitialized = true;
-    }
+  if (!clockInitialized) {
+    initializeClock();
+    clockInitialized = true;
+  }
 
-    if (timeStatus() == timeNotSet) {
-        setDisplayBackground(String("--.--"));
-    } else {
-        char text[5];
-        snprintf(text, 6, "%02d.%02d", hour(), minute());
-        setDisplayBackground(String(text));
-    }
+  if (timeStatus() == timeNotSet) {
+    setDisplayBackground(String("--.--"));
+  } else {
+    char text[5];
+    snprintf(text, 6, "%02d.%02d", hour(), minute());
+    setDisplayBackground(String(text));
+  }
 }
 
 void initializeClock() {
-    Udp.begin(kLocalPort);
-    setSyncProvider(getNtpTime);
+  Udp.begin(kLocalPort);
+  setSyncProvider(getNtpTime);
 }
 
 time_t getNtpTime()
