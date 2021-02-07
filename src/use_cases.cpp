@@ -1,4 +1,4 @@
-#include "volume.h"
+#include "use_cases.h"
 #include "speaker.h"
 #include "notify.h"
 #include "serial.h"
@@ -28,20 +28,33 @@ Result setVolumeDelta(Speaker& speaker, int delta) {
   return Result::OK;
 }
 
-Result increaseVolume(Speaker& speaker) {
+Result doIncreaseVolume(Speaker& speaker) {
   USE_SERIAL.print("VOL+ ");
   RETURN_IF_ERROR(setVolumeDelta(speaker, speaker.getConfiguration().volumeUpStep))
   return Result::OK;
 }
 
-Result decreaseVolume(Speaker& speaker) {
+void increaseVolume(Speaker& speaker) {
+  Result result = doIncreaseVolume(speaker);
+  if (result != Result::OK) {
+    notifyFail(result);
+  }
+}
+
+Result doDecreaseVolume(Speaker& speaker) {
   USE_SERIAL.print("VOL- ");
   RETURN_IF_ERROR(setVolumeDelta(speaker, speaker.getConfiguration().volumeDownStep))
   return Result::OK;
 }
 
+void decreaseVolume(Speaker& speaker) {
+  Result result = doDecreaseVolume(speaker);
+  if (result != Result::OK) {
+    notifyFail(result);
+  }
+}
 
-Result toggleMute(Speaker &speaker) {
+Result doToggleMute(Speaker &speaker) {
   bool isMuted;
   USE_SERIAL.print("Mute: ");
   RETURN_IF_ERROR(speaker.getMuteStatus(isMuted))
@@ -54,4 +67,18 @@ Result toggleMute(Speaker &speaker) {
   USE_SERIAL.println(!isMuted ? "on" : "off");
   notifyMuteSetSuccess(!isMuted);
   return Result::OK;
+}
+
+void toggleMute(Speaker &speaker) {
+  Result result = doToggleMute(speaker);
+  if (result != Result::OK) {
+    notifyFail(result);
+  }
+}
+
+void setTvInput(Speaker &speaker) {
+  Result result = speaker.setTvInput();
+  if (result != Result::OK) {
+    notifyFail(result);
+  }
 }

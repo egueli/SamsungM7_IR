@@ -9,8 +9,8 @@
 #include "speaker_watchdog.h"
 #include "http_response.h"
 #include "display.h"
-#include "volume.h"
 #include "notify.h"
+#include "use_cases.h"
 
 #ifdef SPEAKER_MULTIROOM
 #include "speaker_samsung_multiroom.h"
@@ -58,29 +58,17 @@ void onHttpWait() {
 }
 
 void onVolumeUp() {
-  Result result = increaseVolume(speaker);
-  if (result != Result::OK) {
-    notifyFail(result);
-  }
+  increaseVolume(speaker);
 }
 
 void onVolumeDown() {
-  Result result = decreaseVolume(speaker);
-  if (result != Result::OK) {
-    notifyFail(result);
-  }
+  decreaseVolume(speaker);
 }
 
 void onTvRad() {
-  Result result = speaker.setTvInput();
-  if (result != Result::OK) {
-    notifyFail(result);
-  }
+  setTvInput(speaker);
 }
 
 void onMute() {
-  Result result = toggleMute(speaker);
-  if (result != Result::OK) {
-    notifyFail(result);
-  }
+  toggleMute(speaker);
 }
