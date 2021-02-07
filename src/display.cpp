@@ -2,6 +2,7 @@
 #include "board.h"
 #include "config.h"
 #include "seven_seg_display.h"
+#include "display.h"
 
 #ifdef DISPLAY_MAX7219
 #include "seven_seg_max7219.h"
@@ -54,10 +55,49 @@ SevenSegmentDisplay &display = tm1637Display;
 
 unsigned long lastTextAt;
 
+byte getSegmentsOfChar(char c);
+void renderText(uint8_t outDigits[4], String text);
+
+void setupDisplay() {
+  display.begin();
+  display.setBrightness(kDisplayBrightness);
+  displayText(" Hi");
+} 
+
 void loopDisplay() {
   if (lastTextAt != 0 && millis() > lastTextAt + kTextDisplayDuration) {
     display.clear();
     lastTextAt = 0;
+  }
+}
+
+void displayText(String text) {
+  uint8_t digits[4] = {0, 0, 0, 0};
+  renderText(digits, text);
+  display.setSegments(digits);
+  display.setBrightness(kDisplayBrightness);
+  lastTextAt = millis();
+}
+
+void renderText(uint8_t outDigits[4], String text) {
+  int digit = 0;
+  for (int p = 0; p < (int)text.length() && digit < 4 + 1; p++) {
+    char ch = text[p];
+    if (digit > 0 && ch == '.') {
+      byte prevDigitIndex = kDigitsWiring[digit - 1];
+      byte dotIndex = kSegmentsWiring[0];
+      bitSet(outDigits[prevDigitIndex], dotIndex);
+    } else if (digit < 4) {
+      byte digitIndex = kDigitsWiring[digit];
+      byte glyph = getSegmentsOfChar(ch);
+      for (int ns = 0; ns < 8; ns++) {
+        if ((glyph & (1 << ns)) != 0) {
+          byte segmentIndex = kSegmentsWiring[ns];
+          bitSet(outDigits[digitIndex], segmentIndex);
+        }
+      }
+      digit++;
+    }
   }
 }
 
@@ -70,37 +110,3 @@ byte getSegmentsOfChar(char c) {
   }
   return 0b00010000;
 }
-
-void displayText(String text) {
-  uint8_t digits[4] = {0, 0, 0, 0};
-  int digit = 0;
-  for (int p = 0; p < (int)text.length() && digit < 4 + 1; p++) {
-    char ch = text[p];
-    if (digit > 0 && ch == '.') {
-      byte prevDigitIndex = kDigitsWiring[digit - 1];
-      byte dotIndex = kSegmentsWiring[0];
-      bitSet(digits[prevDigitIndex], dotIndex);
-    } else if (digit < 4) {
-      byte digitIndex = kDigitsWiring[digit];
-      byte glyph = getSegmentsOfChar(ch);
-      for (int ns = 0; ns < 8; ns++) {
-        if ((glyph & (1 << ns)) != 0) {
-          byte segmentIndex = kSegmentsWiring[ns];
-          bitSet(digits[digitIndex], segmentIndex);
-        }
-      }
-      digit++;
-    }
-  }
-  display.setSegments(digits);
-  display.setBrightness(kDisplayBrightness);
-  lastTextAt = millis();
-}
-
-void setupDisplay() {
-  display.begin();
-
-  display.setBrightness(kDisplayBrightness);
-
-  displayText(" Hi");
-} 
