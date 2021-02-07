@@ -66,14 +66,13 @@ void setupDisplay() {
 } 
 
 void loopDisplay() {
-  if (lastTextAt != 0 && millis() > lastTextAt + kTextDisplayDuration) {
+  if (millis() > lastTextAt + kTextDisplayDuration) {
     display.setSegments(backgroundDigits);
-    lastTextAt = 0;
   }
 }
 
 void displayText(String text) {
-  uint8_t digits[4] = {0, 0, 0, 0};
+  uint8_t digits[4];
   renderText(digits, text);
   display.setSegments(digits);
   display.setBrightness(kDisplayBrightness);
@@ -85,6 +84,10 @@ void setDisplayBackground(String backgroundText) {
 }
 
 void renderText(uint8_t outDigits[4], String text) {
+  for (int i = 0; i < 4; i++) {
+    outDigits[i] = 0;
+  }
+
   int digit = 0;
   for (int p = 0; p < (int)text.length() && digit < 4 + 1; p++) {
     char ch = text[p];
