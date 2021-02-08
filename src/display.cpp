@@ -69,8 +69,8 @@ void setupDisplay() {
 void loopDisplay() {
   if (millis() > lastTextAt + kTextDisplayDuration) {
     if (backgroundEnabled) {
-      display.setSegments(backgroundDigits);
       display.setBrightness(kBackgroundDisplayBrightness);
+      display.setSegments(backgroundDigits);
     } else {
       display.clear();
     }
@@ -80,8 +80,8 @@ void loopDisplay() {
 void displayText(String text) {
   uint8_t digits[4];
   renderText(digits, text);
-  display.setSegments(digits);
   display.setBrightness(kDisplayBrightness);
+  display.setSegments(digits);
   lastTextAt = millis();
 }
 
