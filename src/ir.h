@@ -9,5 +9,6 @@ void onVolumeUp();
 void onVolumeDown();
 void onTvRad();
 void onMute();
+void onToggleClock();
 
 void notifyIR();

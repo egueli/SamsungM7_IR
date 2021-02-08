@@ -86,6 +86,11 @@ void consumeIR() {
         onMute();
       }
       break;
+    case kIrToggleClockCode:
+      if (!irCodeToProcess.repeat)
+      {
+        onToggleClock();
+      }    
     default:
       serialPrintUint64(irCodeToProcess.code, HEX);
       Serial.println();

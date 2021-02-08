@@ -18,6 +18,11 @@
  */
 const uint8_t kDisplayBrightness = 64;
 
+/**
+ * The display brightness when inactive, e.g. when showing the clock.
+ */
+const uint8_t kBackgroundDisplayBrightness = 0;
+
 /*
 Uncomment this to use the Samsung Multiroom (legacy) instead of
 Yamaha MusicCast protocol.
@@ -38,6 +43,7 @@ const uint64_t kIrVolumeUpCode = 0x20DF40BF;
 const uint64_t kIrVolumeDownCode = 0x20DFC03F;
 const uint64_t kIrMuteCode = 0x20DF906F;
 const uint64_t kIrTvRadCode = 0x20DF0FF0;
+const uint64_t kIrToggleClockCode = 0x20DF8679;
 #else
 // My Acer TV remote control
 const uint64_t kIrVolumeUpCode = 0x86C620DF;
@@ -45,3 +51,9 @@ const uint64_t kIrVolumeDownCode = 0x86C6A05F;
 const uint64_t kIrMuteCode = 0x86C67887;
 const uint64_t kIrTvRadCode = 0x86C630CF;
 #endif
+
+/** The time zone offset in hours. e.g. CET is 1 */
+const int kTimeZone = 1;
+
+/** Use the 12 hour (ap/pm) time format, 24h otherwise */
+const bool kTimeFormat12h = false;

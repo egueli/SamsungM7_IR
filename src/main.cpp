@@ -11,6 +11,7 @@
 #include "display.h"
 #include "notify.h"
 #include "use_cases.h"
+#include "clock.h"
 
 #ifdef SPEAKER_MULTIROOM
 #include "speaker_samsung_multiroom.h"
@@ -37,6 +38,7 @@ void setup() {
   setupWifi();
   setupDiscovery(speaker);
   setupIR();
+  setupClock();
 }
 
 void loop() {
@@ -44,6 +46,7 @@ void loop() {
   loopWifi();
   loopDisplay();
   loopDiscovery();
+  loopClock();
   watchdog.loop();
 }
 
@@ -71,4 +74,8 @@ void onTvRad() {
 
 void onMute() {
   toggleMute(speaker);
+}
+
+void onToggleClock() {
+  toggleClock();
 }

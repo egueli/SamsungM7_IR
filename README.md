@@ -29,6 +29,7 @@ The speaker may accept multiple inputs (Bluetooth, tuner, phono etc.), and it ma
 * MDNS/Bonjour: auto-discovery of the speaker IP address on the network; optionally a name can be provided to connect to a specific speaker;
 * Speaker watchdog: checks periodically that the speaker is still available at that address, and reset itself otherwise;
 * Volume and status output to a 7-segment display.
+* When not active, the display can show a clock. This can be enabled or disabled with one of the remote control buttons.
 
 ### Buttons
 
@@ -36,6 +37,7 @@ The speaker may accept multiple inputs (Bluetooth, tuner, phono etc.), and it ma
 * Same for the Mute button. It toggles the mute state.
 * The TV/Radio button is repurposed it to set the speaker to select the TV input. I chose that one because I almost never watch broadcast TV.
     * On MusicCast devices, this button also powers up the device if in standby and selects the B speaker set. This can be changed in source code.
+* The "blue" custom button is used to enable/disable the clock.
 
 Samsung Multiroom devices may go on standby after 8 hours, and won't play any audio after that. To leave standby, just press any of the buttons above.
 
@@ -90,16 +92,13 @@ In `config.h` file you can configure the IR commands and speaker protocol to use
 
 In `config_discovery.cpp` you can set the speaker name to connect to. See [Speaker discovery] section.
 
-## IR codes
+## Compatibility with IR remote controls
 
-SpeakerIR is compatible with my LG smart TV remote control. The following buttons are recognized:
-
-* Volume up
-* Volume down
-* Mute
-* TV/Radio
+SpeakerIR is compatible with my LG TV remote control. 
 
 To use a different remote control, open the serial monitor and look at the IR codes that are sent when you press the desired buttons. Then change the constants in `config.h` accordingly.
+
+The firmware supports the NEC IR protocol natively. Other protocols can be used too, but they're disabled to improve reception quality for NEC protocol. For details see the documentation of [the IR library used](https://github.com/crankyoldgit/IRremoteESP8266/) and the build flags in `platformio.ini`.
 
 ## Speaker discovery
 
@@ -118,3 +117,11 @@ The display will show `E` followed by another letter if an error occurred:
 * `Et` if the speaker didn't reply on time (HTTP request timeout);
 * `Eh` if the speaker replied with an HTTP error code;
 * `EP` if the firmware wasn't able to parse the speaker response.
+
+## Clock
+
+Press the "blue" button on the IR remote to enable or disable the clock.
+
+The clock is synchronized with public NTP servers every five minutes.
+
+The time zone and the time format (12h or 24h) can be set in `config.h`.
