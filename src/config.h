@@ -43,6 +43,7 @@ const uint64_t kIrVolumeUpCode = 0x20DF40BF;
 const uint64_t kIrVolumeDownCode = 0x20DFC03F;
 const uint64_t kIrMuteCode = 0x20DF906F;
 const uint64_t kIrTvRadCode = 0x20DF0FF0;
+const uint64_t kIrToggleClockCode = 0x20DF8679;
 #else
 // My Acer TV remote control
 const uint64_t kIrVolumeUpCode = 0x86C620DF;

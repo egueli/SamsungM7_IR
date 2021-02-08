@@ -3,6 +3,7 @@
 #include "notify.h"
 #include "serial.h"
 #include "config.h"
+#include "display.h"
 
 Result setVolumeDelta(Speaker& speaker, int delta) {
   USE_SERIAL.print("... ");
@@ -81,4 +82,8 @@ void setTvInput(Speaker &speaker) {
   if (result != Result::OK) {
     notifyFail(result);
   }
+}
+
+void toggleClock() {
+  toggleDisplayBackground();
 }

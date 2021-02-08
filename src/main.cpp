@@ -75,3 +75,7 @@ void onTvRad() {
 void onMute() {
   toggleMute(speaker);
 }
+
+void onToggleClock() {
+  toggleClock();
+}

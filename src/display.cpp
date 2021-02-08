@@ -55,6 +55,7 @@ SevenSegmentDisplay &display = tm1637Display;
 
 unsigned long lastTextAt;
 uint8_t backgroundDigits[4] = { 0, 0, 0, 0 };
+bool backgroundEnabled;
 
 byte getSegmentsOfChar(char c);
 void renderText(uint8_t outDigits[4], String text);
@@ -67,8 +68,12 @@ void setupDisplay() {
 
 void loopDisplay() {
   if (millis() > lastTextAt + kTextDisplayDuration) {
-    display.setSegments(backgroundDigits);
-    display.setBrightness(kBackgroundDisplayBrightness);
+    if (backgroundEnabled) {
+      display.setSegments(backgroundDigits);
+      display.setBrightness(kBackgroundDisplayBrightness);
+    } else {
+      display.clear();
+    }
   }
 }
 
@@ -82,6 +87,10 @@ void displayText(String text) {
 
 void setDisplayBackground(String backgroundText) {
   renderText(backgroundDigits, backgroundText);
+}
+
+void toggleDisplayBackground() {
+  backgroundEnabled = !backgroundEnabled;
 }
 
 void renderText(uint8_t outDigits[4], String text) {
