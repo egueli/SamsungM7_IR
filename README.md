@@ -29,7 +29,7 @@ The speaker may accept multiple inputs (Bluetooth, tuner, phono etc.), and it ma
 * MDNS/Bonjour: auto-discovery of the speaker IP address on the network; optionally a name can be provided to connect to a specific speaker;
 * Speaker watchdog: checks periodically that the speaker is still available at that address, and reset itself otherwise;
 * Volume and status output to a 7-segment display.
-* When not active, the display shows a clock. This can be enabled or disabled with one of the IR buttons.
+* When not active, the display can show a clock. This can be enabled or disabled with one of the remote control buttons.
 
 ### Buttons
 
@@ -92,16 +92,13 @@ In `config.h` file you can configure the IR commands and speaker protocol to use
 
 In `config_discovery.cpp` you can set the speaker name to connect to. See [Speaker discovery] section.
 
-## IR codes
+## Compatibility with IR remote controls
 
-SpeakerIR is compatible with my LG smart TV remote control. The following buttons are recognized:
-
-* Volume up
-* Volume down
-* Mute
-* TV/Radio
+SpeakerIR is compatible with my LG TV remote control. 
 
 To use a different remote control, open the serial monitor and look at the IR codes that are sent when you press the desired buttons. Then change the constants in `config.h` accordingly.
+
+The firmware supports the NEC IR protocol natively. Other protocols can be used too, but they're disabled to improve reception quality for NEC protocol. For details see the documentation of [the IR library used](https://github.com/crankyoldgit/IRremoteESP8266/) and the build flags in `platformio.ini`.
 
 ## Speaker discovery
 
@@ -125,6 +122,6 @@ The display will show `E` followed by another letter if an error occurred:
 
 Press the "blue" button on the IR remote to enable or disable the clock.
 
-The clock is synchronized with public NTP servers.
+The clock is synchronized with public NTP servers every five minutes.
 
 The time zone and the time format (12h or 24h) can be set in `config.h`.
