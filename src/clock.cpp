@@ -42,7 +42,7 @@ void loopClock() {
   } else {
     int h = kTimeFormat12h ? hourFormat12() : hour();
     char text[5];
-    snprintf(text, 6, "% 2d.%02d", h, minute());
+    snprintf(text, 6, "%2d.%02d", h, minute());
     setDisplayBackground(String(text));
   }
 }
