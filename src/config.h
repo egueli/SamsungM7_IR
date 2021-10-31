@@ -52,7 +52,7 @@ const uint64_t kIrMuteCode = 0x86C67887;
 const uint64_t kIrTvRadCode = 0x86C630CF;
 #endif
 
-/** The time zone offset in hours. e.g. CET is 1 */
+/** The time zone offset in hours, including DST. e.g. CET is 1 */
 const int kTimeZone = 1;
 
 /** Use the 12 hour (ap/pm) time format, 24h otherwise */
