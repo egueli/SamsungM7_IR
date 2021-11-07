@@ -18,7 +18,8 @@ const char *kServiceName = kSpeakerServiceName;
 const unsigned int kMaxMDNSPacketSize = 512;
 byte buffer[kMaxMDNSPacketSize];
 
-bool querySent;
+unsigned long querySentAt;
+const unsigned long kSendQueryEvery = 5 * 1000;
 
 const size_t kMaxEntries = 16;
 std::set<String> services;
@@ -154,10 +155,10 @@ void loopDiscovery()
     {
         return;
     }
-    if (!querySent)
+    if (querySentAt == 0 || millis() > querySentAt + kSendQueryEvery)
     {
         sendQuery(MDNS_TYPE_PTR, kServiceQuestion);
-        querySent = true;
+        querySentAt = millis();
     }
     my_mdns.loop();
 
