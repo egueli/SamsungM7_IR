@@ -106,23 +106,25 @@ void answerCallback(const mdns::Answer *answer)
     }
 }
 
-mdns::MDns my_mdns(NULL, NULL, answerCallback, buffer, kMaxMDNSPacketSize);
+// Pointer to MDns object. It must be initialized later (maybe after WiFi.begin()?), otherwise it won't receive any UDP multicast packets.
+mdns::MDns *my_mdns;
 
 void setupDiscovery(Speaker &speaker)
 {
+    my_mdns = new mdns::MDns(NULL, NULL, answerCallback, buffer, kMaxMDNSPacketSize);
     kServiceQuestion = speaker.getConfiguration().mdnsServiceQuestion;
 }
 
 void sendQuery(unsigned int type, const char *queryName)
 {
-    my_mdns.Clear();
+    my_mdns->Clear();
     struct mdns::Query query;
     strncpy(query.qname_buffer, queryName, MAX_MDNS_NAME_LEN);
     query.qtype = type;
     query.qclass = 1; // "INternet"
     query.unicast_response = 0;
-    my_mdns.AddQuery(query);
-    my_mdns.Send();
+    my_mdns->AddQuery(query);
+    my_mdns->Send();
 }
 
 bool serviceNameMatches(String &service)
@@ -160,7 +162,7 @@ void loopDiscovery()
         sendQuery(MDNS_TYPE_PTR, kServiceQuestion);
         querySentAt = millis();
     }
-    my_mdns.loop();
+    my_mdns->loop();
 
     dumpServices();
 
