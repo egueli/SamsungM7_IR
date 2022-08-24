@@ -1,21 +1,21 @@
-#pragma once
+// #pragma once
 
-#include <Arduino.h>
-#include "error.h"
-#include "speaker.h"
+// #include <Arduino.h>
+// #include "error.h"
+// #include "speaker.h"
 
-void notifyNoSpeaker();
-void notifySpeakerAddress(String address);
+// void notifyNoSpeaker();
+// void notifySpeakerAddress(String address);
 
-void notifyVolumeGetSuccess(Speaker &speaker, int volume);
-void notifyVolumeSetSuccess(Speaker &speaker, int volume);
+// void notifyVolumeGetSuccess(Speaker &speaker, int volume);
+// void notifyVolumeSetSuccess(Speaker &speaker, int volume);
 
-void notifyAuxGetSuccess(bool isAux);
-void notifyAuxSetSuccess(bool isAux);
+// void notifyAuxGetSuccess(bool isAux);
+// void notifyAuxSetSuccess(bool isAux);
 
-void notifyTv(bool wasSet);
+// void notifyTv(bool wasSet);
 
-void notifyMuteGetSuccess();
-void notifyMuteSetSuccess(bool isMuted);
+// void notifyMuteGetSuccess();
+// void notifyMuteSetSuccess(bool isMuted);
 
-void notifyFail(Result result);
+// void notifyFail(Result result);

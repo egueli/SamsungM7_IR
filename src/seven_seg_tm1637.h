@@ -1,17 +1,17 @@
-#pragma once
+// #pragma once
 
-#include "seven_seg_display.h"
-#include <TM1637Display.h>
+// #include "seven_seg_display.h"
+// #include <TM1637Display.h>
 
-class Tm1637Display : public SevenSegmentDisplay {
-public:
-    Tm1637Display(const uint8_t clockPin, const uint8_t dataPin) :
-        display(clockPin, dataPin) {}
+// class Tm1637Display : public SevenSegmentDisplay {
+// public:
+//     Tm1637Display(const uint8_t clockPin, const uint8_t dataPin) :
+//         display(clockPin, dataPin) {}
 
-    void begin();
-    void setBrightness(const uint8_t brightness);
-    void setSegments(const uint8_t digits[]);
+//     void begin();
+//     void setBrightness(const uint8_t brightness);
+//     void setSegments(const uint8_t digits[]);
 
-private:
-    TM1637Display display;
-};
+// private:
+//     TM1637Display display;
+// };
