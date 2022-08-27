@@ -36,7 +36,10 @@ Result waitForHttpOkResponse(asyncHTTPrequest &request) {
   }
   
   int httpCode = request.responseHTTPcode();
+  return handleHttpOkResponse(httpCode);
+}
 
+Result handleHttpOkResponse(const int httpCode) {
   if (httpCode != 200 /* OK */) {
     USE_SERIAL.printf("[HTTP] GET not OK, code: %d\n", httpCode);
     return Result::ERROR_HTTP_NON_OK_RESPONSE;
