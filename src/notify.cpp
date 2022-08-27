@@ -74,10 +74,8 @@ void notifyFail(Result result) {
 }
 
 void notifyVolumeGetSuccess(Speaker &speaker, int volume) {
-  notifyVolume(speaker, volume, false);
 }
 void notifyVolumeSetSuccess(Speaker &speaker, int volume) {
-  notifyVolume(speaker, volume, true);
 }
 
 
