@@ -39,10 +39,39 @@ void setup() {
   setupDiscovery(speaker);
   setupIR();
   setupClock();
+
+
 }
 
+const int kNumSamples = 30;
+int count = 0;
+unsigned long totalTime;
+bool enableFakeIR;
+
 void loop() {
-  loopIR();
+  if (enableFakeIR) {
+    auto start_at = millis();
+    if (count % 2 == 0) {
+      onVolumeUp();
+    } else {
+      onVolumeDown();
+    }
+    auto end_at = millis();
+    count++;
+
+    auto time = end_at - start_at;
+    USE_SERIAL.printf("\n** req time: %3lums **\n", time);
+    totalTime += time;
+
+    if (count % kNumSamples == 0) {
+      unsigned long average = totalTime / kNumSamples;
+      USE_SERIAL.printf("\n**** AVG time: %3lums ****\n", average);
+      displayText(String(average));
+      totalTime = 0;
+      count = 0;
+    }
+  }
+
   loopWifi();
   loopDisplay();
   loopDiscovery();
@@ -54,6 +83,7 @@ void onDiscoveryFinished(String address) {
   notifySpeakerAddress(address);
   speaker.setAddress(address);
   watchdog.setAddress(address);
+  enableFakeIR = true;
 }
 
 void onHttpWait() {
