@@ -1,6 +1,7 @@
 #pragma once
 
-#include <asyncHTTPrequest.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
 #include <ArduinoJson.h>
 #include "speaker.h"
 
@@ -9,6 +10,10 @@
  */
 class MusicCastSpeaker : public Speaker {
 public:
+    MusicCastSpeaker() {
+        // httpClient.setReuse(true);
+    }
+
     Configuration getConfiguration();
 
     void setAddress(const String &address);
@@ -24,10 +29,11 @@ public:
 
 private:
     String ipAddress;
-    asyncHTTPrequest request;
+    WiFiClient wifiClient;
+    HTTPClient httpClient;
     Result getZoneUrl(String &output, const String &endPart);
     Result getSystemUrl(String &output, const String &endPart);
-    Result checkSuccess();
+    Result checkSuccess(const int httpCode);
     Result getStatus(DynamicJsonDocument &outputDoc);
     Result powerOn();
     Result setABSpeakers();

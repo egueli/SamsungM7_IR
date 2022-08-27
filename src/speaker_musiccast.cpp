@@ -26,10 +26,10 @@ bool MusicCastSpeaker::isAddressValid()
         return false;
     }
 
-    request.open("GET", url.c_str());
-    request.send();
+    httpClient.begin(wifiClient, url);
+    int httpCode = httpClient.GET();
 
-    return waitForHttpOkResponse(request) == Result::OK;
+    return handleHttpOkResponse(httpCode) == Result::OK;
 }
 
 Result MusicCastSpeaker::getVolume(int &outVolume)
@@ -46,9 +46,8 @@ Result MusicCastSpeaker::setVolume(int newVolume)
     String url;
     RETURN_IF_ERROR(getZoneUrl(url, "setVolume?volume=" + String(newVolume)))
 
-    request.open("GET", url.c_str());
-    request.send();
-    return checkSuccess();
+    httpClient.begin(wifiClient, url);
+    return checkSuccess(httpClient.GET());
 }
 
 /**
@@ -66,9 +65,9 @@ Result MusicCastSpeaker::setTvInput()
     RETURN_IF_ERROR(getZoneUrl(url, "setInput?input=optical1"))
 
     Serial.print("OK. Setting input to Optical1... ");
-    request.open("GET", url.c_str());
-    request.send();
-    RETURN_IF_ERROR(checkSuccess()) 
+    httpClient.begin(wifiClient, url);
+    int httpCode = httpClient.GET();
+    RETURN_IF_ERROR(checkSuccess(httpCode));
 
     Serial.println("OK. Setting speakers A/B... ");
     Result result = setABSpeakers();
@@ -83,10 +82,8 @@ Result MusicCastSpeaker::powerOn()
 {
     String url;
     RETURN_IF_ERROR(getZoneUrl(url, "setPower?power=on"))
-    request.open("GET", url.c_str());
-    request.send();
-
-    return checkSuccess();
+    httpClient.begin(wifiClient, url);
+    return checkSuccess(httpClient.GET());
 }
 
 Result MusicCastSpeaker::setABSpeakers() 
@@ -105,9 +102,8 @@ Result MusicCastSpeaker::setABSpeaker(const char &letter, const bool enable) {
     RETURN_IF_ERROR(getSystemUrl(url, command))
 
     Serial.println(url);
-    request.open("GET", url.c_str());
-    request.send();
-    return checkSuccess();
+    httpClient.begin(wifiClient, url);
+    return checkSuccess(httpClient.GET());
 }
 
 Result MusicCastSpeaker::getMuteStatus(bool &outStatus)
@@ -124,9 +120,8 @@ Result MusicCastSpeaker::setMuteStatus(const bool newMuteStatus)
     String url;
     RETURN_IF_ERROR(getZoneUrl(url, newMuteStatus ? "setMute?enable=true" : "setMute?enable=false"))
 
-    request.open("GET", url.c_str());
-    request.send();
-    return checkSuccess();
+    httpClient.begin(wifiClient, url);
+    return checkSuccess(httpClient.GET());
 }
 
 /**
@@ -159,11 +154,11 @@ Result MusicCastSpeaker::getSystemUrl(String &output, const String &endPart)
     return Result::OK;
 }
 
-Result MusicCastSpeaker::checkSuccess()
+Result MusicCastSpeaker::checkSuccess(const int httpCode)
 {
-    RETURN_IF_ERROR(waitForHttpOkResponse(request))
+    RETURN_IF_ERROR(handleHttpOkResponse(httpCode))
 
-    String body = request.responseText();
+    String body = httpClient.getString();
     DynamicJsonDocument doc(384);
     DeserializationError jsonError = deserializeJson(doc, body);
     if (jsonError)
@@ -187,12 +182,11 @@ Result MusicCastSpeaker::getStatus(DynamicJsonDocument &outputDoc)
     String url;
     RETURN_IF_ERROR(getZoneUrl(url, "getStatus"))
 
-    request.open("GET", url.c_str());
-    request.send();
+    httpClient.begin(wifiClient, url);
+    int httpCode = httpClient.GET();
+    RETURN_IF_ERROR(handleHttpOkResponse(httpCode));
 
-    RETURN_IF_ERROR(waitForHttpOkResponse(request))
-
-    String body = request.responseText();
+    String body = httpClient.getString();
     DeserializationError jsonError = deserializeJson(outputDoc, body);
     if (jsonError)
     {
