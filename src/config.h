@@ -50,6 +50,7 @@ const uint64_t kIrVolumeUpCode = 0x86C620DF;
 const uint64_t kIrVolumeDownCode = 0x86C6A05F;
 const uint64_t kIrMuteCode = 0x86C67887;
 const uint64_t kIrTvRadCode = 0x86C630CF;
+const uint64_t kIrToggleClockCode = 0x20DF8679;
 #endif
 
 /** The time zone offset in hours, including DST. e.g. CET is 1 */
