@@ -2,6 +2,8 @@
 #include "http_response.h"
 #include "notify.h"
 
+const size_t kResponseJsonMaxSize = 2048;
+
 Speaker::Configuration MusicCastSpeaker::getConfiguration()
 {
     return {
@@ -34,7 +36,7 @@ bool MusicCastSpeaker::isAddressValid()
 
 Result MusicCastSpeaker::getVolume(int &outVolume)
 {
-    DynamicJsonDocument doc(384);
+    DynamicJsonDocument doc(kResponseJsonMaxSize);
     RETURN_IF_ERROR(getStatus(doc))
 
     outVolume = doc["volume"];
@@ -112,7 +114,7 @@ Result MusicCastSpeaker::setABSpeaker(const char &letter, const bool enable) {
 
 Result MusicCastSpeaker::getMuteStatus(bool &outStatus)
 {
-    DynamicJsonDocument doc(384);
+    DynamicJsonDocument doc(kResponseJsonMaxSize);
     RETURN_IF_ERROR(getStatus(doc))
 
     outStatus = doc["mute"];
@@ -164,7 +166,7 @@ Result MusicCastSpeaker::checkSuccess()
     RETURN_IF_ERROR(waitForHttpOkResponse(request))
 
     String body = request.responseText();
-    DynamicJsonDocument doc(384);
+    DynamicJsonDocument doc(kResponseJsonMaxSize);
     DeserializationError jsonError = deserializeJson(doc, body);
     if (jsonError)
     {
